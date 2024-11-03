@@ -23,10 +23,17 @@ class CacheHelper {
     return await sharedPreferences!.setDouble(key, value);
   }
 
-  static dynamic getData({
-    required String key,
-  }) {
-    return sharedPreferences!.get(key);
+  static dynamic getData({required String key, dynamic defaultValue}) {
+    // Check if sharedPreferences is initialized
+    if (sharedPreferences == null) {
+      return defaultValue;
+    }
+
+    // Retrieve the value
+    var value = sharedPreferences!.get(key);
+
+    // Return the value if it exists; otherwise, return the provided default value
+    return value ?? defaultValue;
   }
 
   static Future<bool> removeData({

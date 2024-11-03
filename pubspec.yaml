@@ -17,8 +17,8 @@ dependencies:
   shared_preferences: ^2.3.2
   bloc_provider: ^1.0.0
   flutter_bloc: ^8.1.6
-  flutter_native_splash: ^2.4.2
-  flutter_launcher_icons: ^0.14.1
+#  flutter_native_splash: ^2.4.2
+#  flutter_launcher_icons: ^0.14.1
 
 dev_dependencies:
   flutter_test:
@@ -40,17 +40,17 @@ flutter:
 
 
 
-flutter_native_splash:
-  color: "#EDE9FF"
-  image: "assets/images/splash.png"
-
-flutter_launcher_icons:
-  ios: true
-  android: true
-  image_path_android: "assets/logo/logo.png"
-  image_path_ios: "assets/logo/logo.png"
-  adaptive_icon_foreground: "assets/logo/logo.png"
-  adaptive_icon_background: "assets/logo/logo.png"
+#flutter_native_splash:
+#  color: "#EDE9FF"
+#  image: "assets/images/splash.png"
+#
+#flutter_launcher_icons:
+#  ios: true
+#  android: true
+#  image_path_android: "assets/logo/logo.png"
+#  image_path_ios: "assets/logo/logo.png"
+#  adaptive_icon_foreground: "assets/logo/logo.png"
+#  adaptive_icon_background: "assets/logo/logo.png"
 
 
 
