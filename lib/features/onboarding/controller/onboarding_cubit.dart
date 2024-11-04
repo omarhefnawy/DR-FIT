@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_provider/bloc_provider.dart';
 import 'package:dr_fit/core/network/local/cache_helper.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/login.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/onboarding/model/onboarding_model.dart';
 import 'package:flutter/material.dart';
 

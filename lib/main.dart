@@ -1,5 +1,5 @@
 import 'package:dr_fit/core/network/local/cache_helper.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/login.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/onboarding/controller/onboarding_cubit.dart';
 import 'package:dr_fit/features/onboarding/view/page/onboarding_page.dart';
 import 'package:flutter/material.dart';
@@ -25,8 +25,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: (CacheHelper.getData(key: 'onboarding', defaultValue: false)
                 as bool)
-            ? const LoginScreen()
-            : const OnboardingPage(),
+            ?  LoginScreen()
+            :  OnboardingPage(),
       ),
     );
   }
