@@ -1,7 +1,10 @@
+import 'package:dr_fit/TempHome.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
+import 'package:dr_fit/features/onboarding/view/components/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
   LoginCubit() : super(LoginInitialState());
@@ -20,8 +23,56 @@ class LoginCubit extends Cubit<LoginStates> {
     emit(LoginChangePasswordVisibilityState());
   }
 
-  void changeCheckBoxSelected(bool click) {
-    isChecked = click;
-    emit(LoginChangeCheckBoxState());
+  Future<void> signIn({required String email, required String password}) async {
+    emit(LoginLoading());
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      emit(LoginLoaded());
+    } catch (e) {
+      emit(LoginFail(massege: e.toString()));
+    }
+  }
+
+  Future<void> signOut() async {
+    emit(LoginLoading());
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+      emit(LogOutState());
+    } catch (e) {
+      emit(LoginFail(massege: e.toString()));
+    }
+  }
+
+  Future<void> signWithGoogle(BuildContext context) async {
+    emit(GoogleInitial());
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      // Sign out first to ensure the user is prompted to choose an account.
+      await googleSignIn.signOut();
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        emit(GoogleFailed(massege: "Sign-in canceled by user."));
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      emit(GoogleSuccess());
+      navigateAndFinish(context, HomePage());
+    } catch (e) {
+      emit(GoogleFailed(massege: e.toString()));
+    }
   }
 }

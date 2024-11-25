@@ -1,10 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors, must_be_immutable, prefer_const_constructors
 
 import 'package:dr_fit/core/utils/constants.dart';
-import 'package:dr_fit/features/auth/presentation/screens/changepassword/change_password_screen.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/onboarding/view/components/component.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +20,9 @@ class ForgetpasswordScreen extends StatelessWidget {
         listener: (context, state) {},
         builder: (context, state) {
           return Scaffold(
+            appBar: AppBar(
+              backgroundColor: kPrimaryColor,
+            ),
             backgroundColor: kPrimaryColor,
             body: Center(
               child: SingleChildScrollView(
@@ -52,19 +55,41 @@ class ForgetpasswordScreen extends StatelessWidget {
                           prefix: Icons.email,
                         ),
                         SizedBox(
-                          height: 150,
+                          height: 100,
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 60),
                           child: defaultButton(
                             function: () {
                               if (formKey.currentState!.validate()) {
-                              navigateTo(context, ChangePasswordScreen());
-
-
+                                var email = emailController.text.trim();
+                                //here reset code
+                                try {
+                                  FirebaseAuth.instance
+                                      .sendPasswordResetEmail(email: email);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text("Check you Email sir password"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  Future.delayed(Duration(seconds: 3), () {
+                                    Navigator.pop(
+                                        context); // Navigate back to the previous page
+                                  });
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text("error sending reset password"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               }
                             },
-                            text: 'التالى',
+                            text: 'reset',
                             isUpperCase: true,
                             radius: 20,
                           ),

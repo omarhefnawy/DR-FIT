@@ -1,21 +1,17 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, must_be_immutable
 
-
-
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/cubit/states.dart';
 import 'package:dr_fit/features/onboarding/view/components/component.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class RegisterScreen extends StatelessWidget {
   var formKey = GlobalKey<FormState>();
- TextEditingController emailController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
@@ -23,9 +19,41 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => RegisterCubit(),
-      child: BlocConsumer<RegisterCubit,RegisterStates>(
-        listener: (context, state) {},
+      child: BlocConsumer<RegisterCubit, RegisterStates>(
+        listener: (context, state) async {
+          if (state is RegisterFailState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.massege),
+                backgroundColor: Colors.red,
+              ),
+            );
+          } else if (state is RegisterLoadedState) {
+            try {
+              await FirebaseAuth.instance.currentUser
+                  ?.sendEmailVerification(); // Send email verification
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Check your email for confirmation.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // Navigate to the main screen after showing the SnackBar
+              Future.delayed(Duration(seconds: 2), () {
+                navigateAndFinish(context, LoginScreen());
+              });
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error sending massegs'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          }
+        },
         builder: (context, state) {
+          var cubit = BlocProvider.of<RegisterCubit>(context);
           return Scaffold(
             backgroundColor: kPrimaryColor,
             body: Center(
@@ -44,19 +72,6 @@ class RegisterScreen extends StatelessWidget {
                         SizedBox(
                           height: 60,
                         ),
-                        defaultFormField(
-                          controller: nameController,
-                          type: TextInputType.text,
-                          validate: (value) {
-                            if (value!.isEmpty) {
-                              return ' الرجاء ادخال الاسم';
-                            }
-                            return null;
-                          },
-                          label: 'الاسم',
-                          prefix: Icons.person,
-                        ),
-
                         SizedBox(
                           height: 15,
                         ),
@@ -75,19 +90,6 @@ class RegisterScreen extends StatelessWidget {
                         SizedBox(
                           height: 15,
                         ),
-                        defaultFormField(
-                          controller: phoneController,
-                          type: TextInputType.text,
-                          validate: (value) {
-                            if (value!.isEmpty) {
-                              return ' الرجاء ادخال رقم الهانف';
-                            }
-                            return null;
-                          },
-                          label: 'رقم الهاتف',
-                          prefix: Icons.email,
-                        ),
-
                         SizedBox(
                           height: 15,
                         ),
@@ -101,7 +103,8 @@ class RegisterScreen extends StatelessWidget {
                             if (formKey.currentState!.validate()) {}
                           },
                           isPassword: RegisterCubit.get(context).isPassword,
-                          suffixPressed: RegisterCubit.get(context).changePasswordVisibility,
+                          suffixPressed: RegisterCubit.get(context)
+                              .changePasswordVisibility,
                           validate: (value) {
                             if (value!.isEmpty) {
                               return 'الرجاء ادخال كلمه المرور';
@@ -123,8 +126,10 @@ class RegisterScreen extends StatelessWidget {
                           onSubmit: (value) {
                             if (formKey.currentState!.validate()) {}
                           },
-                          isPassword: RegisterCubit.get(context).isConfirmPassword,
-                          suffixPressed: RegisterCubit.get(context).changeConfirmPasswordVisibility,
+                          isPassword:
+                              RegisterCubit.get(context).isConfirmPassword,
+                          suffixPressed: RegisterCubit.get(context)
+                              .changeConfirmPasswordVisibility,
                           validate: (value) {
                             if (value!.isEmpty) {
                               return 'الرجاء تاكيد كلمه المرور';
@@ -137,15 +142,21 @@ class RegisterScreen extends StatelessWidget {
                         SizedBox(
                           height: 30,
                         ),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 60),
                           child: defaultButton(
                             function: () {
                               if (formKey.currentState!.validate()) {
-                                if(confirmPasswordController.text!=passwordController.text){
-                                  showToast(text: 'The Password and ConfirmPassword is not Similar', state:  ToastStates.ERROR);
-                                  }
+                                if (confirmPasswordController.text !=
+                                    passwordController.text) {
+                                  showToast(
+                                      text:
+                                          'The Password and ConfirmPassword is not Similar',
+                                      state: ToastStates.ERROR);
+                                }
+                                var email = emailController.text.trim();
+                                var password = passwordController.text.trim();
+                                cubit.signUp(email: email, password: password);
                               }
                             },
                             text: 'تسجيل',
@@ -155,48 +166,6 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         SizedBox(
                           height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(),
-                            ),
-                            Padding(
-                              padding:
-                               EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text('تسجيل باستخدام',
-                                  style: TextStyle(fontSize: 15)),
-                            ),
-                            Expanded(child: Divider()),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            right: 50,
-                            left: 50,
-                            top: 15,
-                            bottom: 15,
-                          ),
-                          child: Container(
-                            height: 50,
-                            child: Row(
-                              children: [
-                                
-                                Spacer(),
-                                IconButton(
-                                  iconSize: 50,
-                                  onPressed: () {},
-                                  icon: Image(
-                                    image: AssetImage(
-                                      'assets/logo/google_logo.png',
-                                    ),
-                                  ),
-                                ),
-                                Spacer(),
-                                
-                              ],
-                            ),
-                          ),
                         ),
                         SizedBox(
                           height: 15,

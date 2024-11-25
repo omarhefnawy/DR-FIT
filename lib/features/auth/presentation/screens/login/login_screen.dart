@@ -1,3 +1,4 @@
+import 'package:dr_fit/TempHome.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/forgetpassword/forgetpassword_screen.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
@@ -16,9 +17,21 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => LoginCubit(),
-      child: BlocConsumer<LoginCubit,LoginStates>(
-        listener: (context, state) {},
+      child: BlocConsumer<LoginCubit, LoginStates>(
+        listener: (context, state) {
+          if (state is LoginLoaded) {
+            navigateAndFinish(context, HomePage());
+          } else if (state is LoginFail) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.massege),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
         builder: (context, state) {
+          var cubit = LoginCubit.get(context);
           return Scaffold(
             backgroundColor: kPrimaryColor,
             body: Center(
@@ -62,7 +75,8 @@ class LoginScreen extends StatelessWidget {
                             if (formKey.currentState!.validate()) {}
                           },
                           isPassword: LoginCubit.get(context).isPassword,
-                          suffixPressed: LoginCubit.get(context).changePasswordVisibility,
+                          suffixPressed:
+                              LoginCubit.get(context).changePasswordVisibility,
                           validate: (value) {
                             if (value!.isEmpty) {
                               return 'الرجاء ادخال كلمه المرور';
@@ -78,20 +92,13 @@ class LoginScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(right: 20),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Checkbox(
-                                value: LoginCubit.get(context).isChecked,
-                                onChanged: (value) {
-                                  LoginCubit.get(context).changeCheckBoxSelected(value!);
-                                },
-                              ),
-                              Text('تذكرنى'),
-                              Spacer(),
                               TextButton(
                                 onPressed: () {
                                   navigateTo(context, ForgetpasswordScreen());
                                 },
-                                child: Text('هل نسيت كلمه المرور'),
+                                child: Text('هل نسيت كلمه المرور؟'),
                               )
                             ],
                           ),
@@ -103,7 +110,12 @@ class LoginScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 60),
                           child: defaultButton(
                             function: () {
-                              if (formKey.currentState!.validate()) {}
+                              if (formKey.currentState!.validate()) {
+                                final email = emailController.text.trim();
+                                final password = passwordController.text.trim();
+
+                                cubit.signIn(email: email, password: password);
+                              }
                             },
                             text: 'تسجيل الدخول',
                             isUpperCase: true,
@@ -138,11 +150,12 @@ class LoginScreen extends StatelessWidget {
                             height: 50,
                             child: Row(
                               children: [
-                                
                                 Spacer(),
                                 IconButton(
                                   iconSize: 50,
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    cubit.signWithGoogle(context);
+                                  },
                                   icon: Image(
                                     image: AssetImage(
                                       'assets/logo/google_logo.png',
@@ -150,7 +163,6 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Spacer(),
-                                
                               ],
                             ),
                           ),
@@ -184,5 +196,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-
-
