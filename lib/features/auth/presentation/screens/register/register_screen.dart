@@ -153,10 +153,13 @@ class RegisterScreen extends StatelessWidget {
                                       text:
                                           'The Password and ConfirmPassword is not Similar',
                                       state: ToastStates.ERROR);
+                                  return;
+                                } else {
+                                  var email = emailController.text.trim();
+                                  var password = passwordController.text.trim();
+                                  cubit.signUp(
+                                      email: email, password: password);
                                 }
-                                var email = emailController.text.trim();
-                                var password = passwordController.text.trim();
-                                cubit.signUp(email: email, password: password);
                               }
                             },
                             text: 'تسجيل',
