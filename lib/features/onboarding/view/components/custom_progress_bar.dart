@@ -21,7 +21,7 @@ class CustomProgressBar extends StatelessWidget {
         children: [
           Container(
             margin: EdgeInsets.only(right: 5, top: (page == 0) ? 3 : 0),
-            height: context.height * .007,
+            height: context.height * .01,
             width: context.width * .05,
             decoration: BoxDecoration(
               color: (page == 0) ? Colors.white : buttonPrimaryColor,

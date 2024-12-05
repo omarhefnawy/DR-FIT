@@ -46,7 +46,6 @@ class OnboardingPage extends StatelessWidget {
           ),
           backgroundColor: kPrimaryColor,
           body: OnboardingBody(),
-          // bottomNavigationBar: OnboardingButton(),
         );
       },
     );

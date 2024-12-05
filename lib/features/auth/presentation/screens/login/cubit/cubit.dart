@@ -1,6 +1,6 @@
-import 'package:dr_fit/TempHome.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
-import 'package:dr_fit/features/onboarding/view/components/component.dart';
+import 'package:dr_fit/features/data_entry/intro_screen.dart';
+import 'package:dr_fit/core/utils/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -70,7 +70,7 @@ class LoginCubit extends Cubit<LoginStates> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
       emit(GoogleSuccess());
-      navigateAndFinish(context, HomePage());
+      navigateAndFinish(context, IntroScreen());
     } catch (e) {
       emit(GoogleFailed(massege: e.toString()));
     }

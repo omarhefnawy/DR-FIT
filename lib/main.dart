@@ -1,5 +1,7 @@
 import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/features/auth/presentation/screens/auth_page.dart';
+import 'package:dr_fit/features/data_entry/intro_screen.dart';
+import 'package:dr_fit/features/data_entry/weight_picker_screen.dart';
 import 'package:dr_fit/features/onboarding/controller/onboarding_cubit.dart';
 import 'package:dr_fit/features/onboarding/view/page/onboarding_page.dart';
 import 'package:flutter/material.dart';

@@ -1,11 +1,12 @@
 // ignore_for_file: prefer_const_constructors, constant_identifier_names
 
+import 'package:dr_fit/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 Widget defaultButton({
   double width = double.infinity,
-  Color background = Colors.blue,
+  Color background = buttonPrimaryColor,
   bool isUpperCase = true,
   double radius = 3.0,
   required void Function()? function,
@@ -78,27 +79,29 @@ Widget defaultFormField({
                 ),
               )
             : null,
-        border:isBorder? OutlineInputBorder(borderRadius: BorderRadius.circular(20)):OutlineInputBorder(),
+        border: isBorder
+            ? OutlineInputBorder(borderRadius: BorderRadius.circular(20))
+            : OutlineInputBorder(),
         //border:OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
 
 void navigateTo(context, widget) => Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => widget,
-  ),
-);
+      context,
+      MaterialPageRoute(
+        builder: (context) => widget,
+      ),
+    );
 
 void navigateAndFinish(context, widget) => Navigator.pushAndRemoveUntil(
-  context,
-  MaterialPageRoute(
-    builder: (context) => widget,
-  ),
+      context,
+      MaterialPageRoute(
+        builder: (context) => widget,
+      ),
       (route) {
-    return false;
-  },
-);
+        return false;
+      },
+    );
 
 void showToast({
   required String text,

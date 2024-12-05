@@ -58,7 +58,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   وتطورك بشكل دوري''',
     ),
     OnboardingModel(
-      image: 'assets/images/onboarding3.png',
+      image: 'assets/images/onboarding3.jpg',
       title: '',
       subtitle: '''اختار من مطبخ صحي ولذيذ مليان
  وصفات متنوعة اللي يناسب

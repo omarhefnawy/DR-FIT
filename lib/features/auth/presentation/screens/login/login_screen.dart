@@ -1,10 +1,10 @@
-import 'package:dr_fit/TempHome.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/forgetpassword/forgetpassword_screen.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/register_screen.dart';
-import 'package:dr_fit/features/onboarding/view/components/component.dart';
+import 'package:dr_fit/features/data_entry/intro_screen.dart';
+import 'package:dr_fit/core/utils/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,7 +20,7 @@ class LoginScreen extends StatelessWidget {
       child: BlocConsumer<LoginCubit, LoginStates>(
         listener: (context, state) {
           if (state is LoginLoaded) {
-            navigateAndFinish(context, HomePage());
+            navigateAndFinish(context, IntroScreen());
           } else if (state is LoginFail) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
