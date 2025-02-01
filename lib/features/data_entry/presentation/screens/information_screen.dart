@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
+import 'package:dr_fit/features/data_entry/model/user_data.dart';
+import 'package:dr_fit/features/data_entry/presentation/widgets/upload_images.dart';
+import 'package:dr_fit/features/data_entry/presentation/widgets/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InformationScreen extends StatefulWidget {
-  InformationScreen({super.key});
+  double weight, height;
+  InformationScreen({super.key, required this.height, required this.weight});
   @override
   State<InformationScreen> createState() => _InformationScreenState();
 }
@@ -82,7 +86,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       CircleAvatar(
                         backgroundImage: profileImage == null
                             ? NetworkImage(
-                                'https://img.freepik.com/premium-photo/handsome-man-with-perfect-muscular-torso-isolated-white-wall_926199-1985034.jpg',
+                                '$img_from_url',
                               )
                             : FileImage(profileImage),
                         radius: 65,
@@ -98,7 +102,9 @@ class _InformationScreenState extends State<InformationScreen> {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            getProfileImage();
+                            getProfileImage().then((onValue) async {
+                              img_from_url = await uploadImage(profileImage);
+                            });
                           },
                           icon: Icon(
                             color: Colors.black,
@@ -181,7 +187,24 @@ class _InformationScreenState extends State<InformationScreen> {
                     child: defaultButton(
                       width: context.width * .444,
                       function: () {
-                        if (formKey.currentState!.validate()) {}
+                        if (formKey.currentState!.validate()) {
+                          if (img_from_url.isNotEmpty) {
+                            // Create a UserData object
+                            UserData user = UserData(
+                              name: nameController.text,
+                              weight: widget.weight,
+                              height: widget.height,
+                              age: ageController.text,
+                              phone: phoneController.text,
+                              img: img_from_url ??
+                                  'https://img.freepik.com/premium-photo/handsome-man-with-perfect-muscular-torso-isolated-white-wall_926199-1985034.jpg', // Use the uploaded image URL
+                            );
+                            saveUserData(user).then((onValue) {
+                              print('succes');
+                            });
+                          }
+                          // save
+                        }
                       },
                       text: 'التالي',
                       radius: 20,

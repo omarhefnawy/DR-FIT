@@ -2,7 +2,7 @@ import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/core/utils/custom_measure.dart';
-import 'package:dr_fit/features/data_entry/height_picker_screen.dart';
+import 'package:dr_fit/features/data_entry/presentation/screens/height_picker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 
@@ -131,7 +131,8 @@ class WeightPickerState extends State<WeightPickerScreen> {
             padding: EdgeInsets.only(bottom: 20),
             child: defaultButton(
               function: () {
-                navigateTo(context, HeightPickerScreen());
+                navigateTo(
+                    context, HeightPickerScreen(currentWeight: currentWeight));
               },
               text: 'التالي',
               radius: 20,

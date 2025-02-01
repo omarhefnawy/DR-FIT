@@ -23,6 +23,8 @@ dependencies:
   google_sign_in: ^6.2.2
   vertical_weight_slider: ^2.6.0
   image_picker: ^1.1.2
+  cloud_firestore: ^5.6.2
+  firebase_storage: ^12.4.1
 #  flutter_native_splash: ^2.4.2
 #  flutter_launcher_icons: ^0.14.1
 

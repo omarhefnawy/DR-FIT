@@ -3,7 +3,7 @@ import 'package:dr_fit/features/auth/presentation/screens/forgetpassword/forgetp
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/register_screen.dart';
-import 'package:dr_fit/features/data_entry/intro_screen.dart';
+import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

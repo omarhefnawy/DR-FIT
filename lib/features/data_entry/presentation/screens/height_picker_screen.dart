@@ -2,21 +2,23 @@ import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/core/utils/custom_measure.dart';
-import 'package:dr_fit/features/data_entry/information_screen.dart';
+import 'package:dr_fit/features/data_entry/presentation/screens/information_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:vertical_weight_slider/vertical_weight_slider.dart';
 
 class HeightPickerScreen extends StatefulWidget {
-  const HeightPickerScreen({super.key});
+  double currentWeight;
+  HeightPickerScreen({super.key, required this.currentWeight});
 
   @override
   HeightPickerState createState() => HeightPickerState();
 }
 
 class HeightPickerState extends State<HeightPickerScreen> {
+  // double currentWeight;
+  // HeightPickerState({required this.currentWeight});
   late WeightSliderController _controller;
   double Height = 165; // Default selected height.
-
   @override
   void initState() {
     super.initState();
@@ -142,7 +144,14 @@ class HeightPickerState extends State<HeightPickerScreen> {
               padding: EdgeInsets.only(bottom: 20),
               child: defaultButton(
                 function: () {
-                  navigateTo(context, InformationScreen());
+                  print('{$Height} ');
+                  print(widget.currentWeight);
+                  navigateTo(
+                      context,
+                      InformationScreen(
+                        height: Height,
+                        weight: widget.currentWeight,
+                      ));
                 },
                 text: 'التالي',
                 radius: 20,
