@@ -6,6 +6,7 @@ import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/features/data_entry/model/user_data.dart';
 import 'package:dr_fit/features/data_entry/presentation/widgets/upload_images.dart';
 import 'package:dr_fit/features/data_entry/presentation/widgets/user_data.dart';
+import 'package:dr_fit/features/home/layout.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -200,6 +201,7 @@ class _InformationScreenState extends State<InformationScreen> {
                                   'https://img.freepik.com/premium-photo/handsome-man-with-perfect-muscular-torso-isolated-white-wall_926199-1985034.jpg', // Use the uploaded image URL
                             );
                             saveUserData(user).then((onValue) {
+                              navigateTo(context,DrFitLayout());
                               print('succes');
                             });
                           }

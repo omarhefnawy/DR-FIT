@@ -15,7 +15,7 @@ class IntroScreen extends StatelessWidget {
         children: [
           SizedBox(
             width: double.infinity,
-            height: context.height * .6,
+            height: context.height * .4,
             child: Image(
               image: NetworkImage(
                 'https://i.pinimg.com/originals/b6/53/4a/b6534a40c768214684c3362ca1bda9a3.png',
