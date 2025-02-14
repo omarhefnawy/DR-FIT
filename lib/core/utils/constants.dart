@@ -1,3 +1,4 @@
+import 'package:dr_fit/features/exercises/model/exercise_model.dart';
 import 'package:flutter/material.dart';
 
 const kPrimaryColor = Color.fromRGBO(237, 233, 255, 1);
