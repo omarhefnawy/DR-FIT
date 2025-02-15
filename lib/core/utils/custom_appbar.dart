@@ -1,7 +1,10 @@
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:flutter/material.dart';
 
-AppBar customAppBar(context) {
+AppBar customAppBar(
+  context,
+) {
   return AppBar(
     forceMaterialTransparency: true,
     leadingWidth: 200,

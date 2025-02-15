@@ -58,7 +58,9 @@ class ExercisesType extends StatelessWidget {
         if (state is ExerciseSuccess) {
           navigateTo(
             context,
-            ExercisesView(exercises: cubit.exercises),
+            ExercisesView(
+              exercise: state.exercise,
+            ),
           );
         }
       },

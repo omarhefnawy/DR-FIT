@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:dr_fit/core/network/api/dio_consumer.dart';
+import 'package:dr_fit/core/network/api/translotor.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/features/exercises/model/exercise_model.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_view.dart';
