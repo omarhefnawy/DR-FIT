@@ -1,7 +1,8 @@
 import 'dart:io';
+import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/profile/data/model/user_data.dart';
 import 'package:dr_fit/features/profile/presentation/profile_cubit.dart';
-import 'package:dr_fit/features/storege/data/repo_imp.dart';
+import 'package:dr_fit/features/storage/data/repo_imp.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,7 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     String? imageUrl = _imageUrl; // Use the existing image URL by default
     if (_image != null) {
       final storageRepo = UploadProfileImageStorageRepoImp();
-      imageUrl = await storageRepo.uploadToStorege(
+      imageUrl = await storageRepo.uploadToStorage(
         name: widget.data.name, // Use a unique name for the file
         file: _image!,
       );
@@ -106,56 +107,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('تعديل الملف الشخصي')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey[300],
-                    backgroundImage: _image != null
-                        ? FileImage(_image!) // Use FileImage for local files
-                        : (_imageUrl != null && _imageUrl!.isNotEmpty)
-                            ? (_imageUrl!.startsWith('http')
-                                ? NetworkImage(
-                                    _imageUrl!) // Use NetworkImage for URLs
-                                : FileImage(File(
-                                    _imageUrl!))) // Use FileImage for local paths
-                            : const AssetImage(
-                                'assets/default_avatar.png'), // Default image
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'اضغط لاختيار صورة',
-                    style: TextStyle(color: Colors.blue, fontSize: 14),
-                  ),
-                ],
+      backgroundColor: kPrimaryColor,
+      appBar: AppBar(
+        backgroundColor: kPrimaryColor,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Text(
+              'تعديل الملف الشخصي',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
-            _buildTextField('الاسم', nameController),
-            _buildTextField('العمر', ageController,
-                keyboardType: TextInputType.number),
-            _buildTextField('الطول (سم)', heightController,
-                keyboardType: TextInputType.number),
-            _buildTextField('الوزن (كجم)', weightController,
-                keyboardType: TextInputType.number),
-            _buildTextField('رقم الهاتف', phoneController,
-                keyboardType: TextInputType.phone),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _saveChanges,
-                child: const Text('حفظ التعديلات'),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: _image != null
+                          ? FileImage(_image!) // Use FileImage for local files
+                          : (_imageUrl != null && _imageUrl!.isNotEmpty)
+                              ? (_imageUrl!.startsWith('http')
+                                  ? NetworkImage(
+                                      _imageUrl!) // Use NetworkImage for URLs
+                                  : FileImage(
+                                      File(
+                                        _imageUrl!,
+                                      ),
+                                    )) // Use FileImage for local paths
+                              : const AssetImage(
+                                  'assets/logo/logo.png',
+                                ), // Default image
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'اضغط لاختيار صورة',
+                      style: TextStyle(color: Colors.blue, fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              _buildTextField('الاسم', nameController),
+              _buildTextField('العمر', ageController,
+                  keyboardType: TextInputType.number),
+              _buildTextField('الطول (سم)', heightController,
+                  keyboardType: TextInputType.number),
+              _buildTextField('الوزن (كجم)', weightController,
+                  keyboardType: TextInputType.number),
+              _buildTextField('رقم الهاتف', phoneController,
+                  keyboardType: TextInputType.phone),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(buttonPrimaryColor),
+                  ),
+                  onPressed: _saveChanges,
+                  child: const Text(
+                    'حفظ التعديلات',
+                    style: TextStyle(
+                      color: kSecondryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -166,9 +197,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
+        textDirection: TextDirection.rtl,
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(
+          hintTextDirection: TextDirection.rtl,
+          floatingLabelAlignment: FloatingLabelAlignment.start,
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),

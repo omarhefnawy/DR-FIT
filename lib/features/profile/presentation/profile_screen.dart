@@ -27,7 +27,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
-          backgroundColor: kPrimaryColor, title: const Text('الملف الشخصي')),
+        backgroundColor: kPrimaryColor,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Text(
+              'الملف الشخصي',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: BlocBuilder<ProfileCubit, ProfileStates>(
         builder: (context, state) {
           if (state is ProfileLoading) {
@@ -42,41 +55,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // صورة دائرية للملف الشخصي
                   Center(
                     child: CircleAvatar(
-                      radius: 50,
-                      backgroundImage: profile.img.isNotEmpty
-                          ? NetworkImage(profile.img)
-                          : const AssetImage('assets/default_avatar.png')
-                              as ImageProvider,
-                    ),
+                        backgroundColor: kPrimaryColor,
+                        radius: 60,
+                        backgroundImage: profile.img.isNotEmpty
+                            ? NetworkImage(
+                                profile.img,
+                              )
+                            : AssetImage(
+                                'assets/logo/logo.png',
+                              )),
                   ),
                   const SizedBox(height: 16),
 
                   // معلومات المستخدم في كارد
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoRow('الاسم', profile.name),
-                          _buildInfoRow('العمر', profile.age),
-                          _buildInfoRow('الطول', '${profile.height} سم'),
-                          _buildInfoRow('الوزن', '${profile.weight} كجم'),
-                          _buildInfoRow('رقم الهاتف', profile.phone),
-                        ],
+                  Expanded(
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          textDirection: TextDirection.rtl,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoRow('الاسم:', profile.name),
+                            _buildInfoRow('العمر:', profile.age),
+                            _buildInfoRow('الطول:', '${profile.height} سم'),
+                            _buildInfoRow('الوزن:', '${profile.weight} كجم'),
+                            _buildInfoRow('رقم الهاتف:', profile.phone),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  const Spacer(),
-
+                  Spacer(),
                   // زر تعديل الملف الشخصي
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(buttonPrimaryColor),
+                      ),
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -86,14 +109,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                       },
-                      child: const Text('تعديل الملف الشخصي'),
+                      child: const Text(
+                        'تعديل الملف الشخصي',
+                        style: TextStyle(
+                          color: kSecondryColor,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             );
           } else {
-            return const Center(child: Text('حدث خطأ في تحميل البيانات'));
+            return const Center(
+                child: Text(
+              'حدث خطأ في تحميل البيانات',
+            ));
           }
         },
       ),
@@ -105,12 +136,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
+        textDirection: TextDirection.rtl,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          Text(value, style: const TextStyle(fontSize: 16)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textDirection: TextDirection.rtl,
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16),
+            textDirection: TextDirection.rtl,
+          ),
         ],
       ),
     );

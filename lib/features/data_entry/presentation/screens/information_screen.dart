@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dr_fit/features/storege/data/repo_imp.dart';
+import 'package:dr_fit/features/storage/data/repo_imp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
-import 'package:dr_fit/features/storege/domain/repo.dart';
 import 'package:dr_fit/features/home/layout.dart';
 
 class InformationScreen extends StatefulWidget {
@@ -58,9 +57,8 @@ class _InformationScreenState extends State<InformationScreen> {
       String? imageUrl;
       if (_selectedImage != null) {
         imageUrl =
-            await storageRepo.uploadToStorege(name: uid, file: _selectedImage!);
+            await storageRepo.uploadToStorage(name: uid, file: _selectedImage!);
       }
-
       // Save user data to Firestore
       await firebase.collection('users').doc(uid).set({
         'uid': uid,
@@ -71,10 +69,19 @@ class _InformationScreenState extends State<InformationScreen> {
         'phone': phoneController.text.trim(),
         'img': imageUrl ?? '', // Save image URL or empty string if no image
       });
-
       print('✅ User data saved successfully');
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const DrFitLayout()));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ User data saved successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DrFitLayout(
+                    name: nameController.text.trim(),
+                  )));
     } catch (e) {
       print('❌ Error saving user data: $e');
     }

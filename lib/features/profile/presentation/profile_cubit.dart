@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/features/profile/data/model/user_data.dart';
 import 'package:dr_fit/features/profile/data/profile_repo_imp.dart';
 import 'package:dr_fit/features/profile/presentation/profile_states.dart';
-import 'package:dr_fit/features/storege/data/repo_imp.dart';
 
 class ProfileCubit extends Cubit<ProfileStates> {
   final profileRepo = ProfileRepoImpl();

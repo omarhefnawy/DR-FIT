@@ -1,12 +1,9 @@
 import 'package:dr_fit/bloc_observer.dart';
 import 'package:dr_fit/core/network/local/cache_helper.dart';
-<<<<<<< Updated upstream
-=======
 import 'package:dr_fit/features/auth/presentation/screens/auth_page.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/weight_picker_screen.dart';
->>>>>>> Stashed changes
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:dr_fit/features/exercises/controller/controller_translate/translate_cubit.dart';
 import 'package:dr_fit/features/home/layout.dart';
@@ -37,17 +34,14 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => ExerciseCubit()),
         BlocProvider(create: (_) => OnboardingCubit()),
-<<<<<<< Updated upstream
         BlocProvider(create: (_) => TranslateCubit()),
-=======
         BlocProvider(create: (_) => ProfileCubit()..fetchData(uid: uid.uid)),
->>>>>>> Stashed changes
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: (CacheHelper.getData(key: 'onboarding', defaultValue: false)
                 as bool)
-            ? DrFitLayout()
+            ? AuthPage()
             : OnboardingPage(),
       ),
     );
