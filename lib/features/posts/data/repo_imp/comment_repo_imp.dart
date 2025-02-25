@@ -62,7 +62,7 @@ class CommentRepoImp implements CommentRepo {
           .collection('posts')
           .doc(postId)
           .collection('comments')
-          .orderBy('date',
+          .orderBy('time',
               descending: true) // ترتيب التعليقات تنازليًا حسب التاريخ
           .get();
 

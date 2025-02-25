@@ -8,8 +8,8 @@ import 'package:dr_fit/features/posts/presetation/cubit/posts_state.dart';
 class PostsCubit extends Cubit<PostsStates> {
   final PostsRepoImp postsRepoImp;
   final CommentRepoImp commentRepoImp;
-  List<PostModel> posts = []; // ✅ تخزين البيانات بدل إعادة تحميلها كل مرة
-
+  List<PostModel> posts = [];
+  List<CommentModel> comments = [];
   PostsCubit({required this.commentRepoImp, required this.postsRepoImp})
       : super(PostsInitialState());
 
@@ -32,7 +32,14 @@ class PostsCubit extends Cubit<PostsStates> {
     emit(CommentsLoadingState());
     try {
       await commentRepoImp.addComment(comment: comment, postId: postId);
-      emit(CommentAddedState(comment: comment)); // 🔥 تحديث الـ UI لحظيًا
+
+      // تحديث التعليقات محليًا
+      comments.insert(0, comment);
+      //  emit(CommentsLoadedState(comments: comments));
+      fetchComments(postId: postId);
+      // ✅ بدلاً من إعادة تحميل جميع الـ posts، قم بتحديث الحالة فقط
+      List<PostModel> updatedPosts = List.from(posts);
+      emit(PostsLoadedState(posts: updatedPosts));
     } catch (e) {
       print('Error Adding comment to Post: ${e.toString()}');
       emit(CommentsFailState(error: e.toString()));
@@ -67,8 +74,7 @@ class PostsCubit extends Cubit<PostsStates> {
   Future<void> fetchComments({required String postId}) async {
     emit(CommentsLoadingState());
     try {
-      List<CommentModel> comments =
-          await commentRepoImp.fecthComments(postId: postId);
+      comments = await commentRepoImp.fecthComments(postId: postId);
       emit(CommentsLoadedState(comments: comments));
     } catch (e) {
       print('Error Fetching post comments: ${e.toString()}');
@@ -96,7 +102,8 @@ class PostsCubit extends Cubit<PostsStates> {
     try {
       await commentRepoImp.deleteComment(
           commentId: commentId, postId: postId, uid: uid);
-      emit(CommentDeletedState(commentId: commentId)); // ✅ تحديث الـ UI لحظيًا
+      comments.removeWhere((comment) => comment.commentId == commentId);
+      emit(CommentsLoadedState(comments: comments)); // ✅ تحديث الـ UI لحظيًا
     } catch (e) {
       print('Error Deleting the Comment: ${e.toString()}');
       emit(CommentsFailState(error: e.toString())); // ✅ تصحيح الخطأ هنا

@@ -47,8 +47,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
             create: (_) => ProfileCubit()..fetchData(uid: uid?.uid ?? "")),
         BlocProvider(
-            create: (_) => PostsCubit(
-                commentRepoImp: commentRepo, postsRepoImp: postsRepo)),
+            create: (_) =>
+                PostsCubit(commentRepoImp: commentRepo, postsRepoImp: postsRepo)
+                  ..fetchAllPosts()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

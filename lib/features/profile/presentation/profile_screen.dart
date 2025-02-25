@@ -1,4 +1,8 @@
+import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/home/presentation/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +36,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
+        leading: IconButton(
+            onPressed: () {
+              context.read<PostsCubit>().fetchAllPosts();
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back)),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 20),
@@ -118,7 +128,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-
+                  // log out your account
+                  BlocListener<LoginCubit, LoginStates>(
+                    listener: (context, state) {
+                      if (state is LogOutState) {
+                        navigateAndFinish(context, LoginScreen());
+                      }
+                    },
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(buttonPrimaryColor),
+                        ),
+                        onPressed: () {
+                          context.read<LoginCubit>().signOut();
+                        },
+                        child: const Text(
+                          'تسجيل خروج  ',
+                          style: TextStyle(
+                            color: kSecondryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
 
                   // قسم المنشورات الخاصة بالمستخدم

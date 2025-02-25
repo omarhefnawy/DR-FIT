@@ -28,22 +28,6 @@ class PostAddedState extends PostsStates {
   PostAddedState({required this.post});
 }
 
-class CommentAddedState extends PostsStates {
-  final CommentModel comment;
-  CommentAddedState({required this.comment});
-}
-
-// ✅ حذف بوست أو تعليق بنجاح
-class PostDeletedState extends PostsStates {
-  final String postId;
-  PostDeletedState({required this.postId});
-}
-
-class CommentDeletedState extends PostsStates {
-  final String commentId;
-  CommentDeletedState({required this.commentId});
-}
-
 // ✅ تحديث اللايكات
 class PostLikeUpdatedState extends PostsStates {
   final String postId;
