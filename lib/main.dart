@@ -6,9 +6,12 @@ import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dar
 import 'package:dr_fit/features/data_entry/presentation/screens/weight_picker_screen.dart';
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:dr_fit/features/exercises/controller/controller_translate/translate_cubit.dart';
-import 'package:dr_fit/features/home/layout.dart';
+import 'package:dr_fit/features/home/presentation/screens/layout.dart';
 import 'package:dr_fit/features/onboarding/controller/onboarding_cubit.dart';
 import 'package:dr_fit/features/onboarding/view/page/onboarding_page.dart';
+import 'package:dr_fit/features/posts/data/repo_imp/comment_repo_imp.dart';
+import 'package:dr_fit/features/posts/data/repo_imp/posts_repo_imp.dart';
+import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
 import 'package:dr_fit/features/profile/presentation/profile_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,22 +23,32 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   CacheHelper.init();
   await Firebase.initializeApp();
-
-  runApp(const MyApp());
+  final postsRepo = PostsRepoImp(); // 🔥 إنشاء مرة واحدة فقط
+  final commentRepo = CommentRepoImp();
+  runApp(MyApp(
+    commentRepo: commentRepo,
+    postsRepo: postsRepo,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final PostsRepoImp postsRepo;
+  final CommentRepoImp commentRepo;
+  const MyApp({super.key, required this.postsRepo, required this.commentRepo});
   @override
   Widget build(BuildContext context) {
-    final uid = FirebaseAuth.instance.currentUser!;
+    final uid = FirebaseAuth.instance.currentUser;
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => LoginCubit()),
         BlocProvider(create: (_) => ExerciseCubit()),
         BlocProvider(create: (_) => OnboardingCubit()),
         BlocProvider(create: (_) => TranslateCubit()),
-        BlocProvider(create: (_) => ProfileCubit()..fetchData(uid: uid.uid)),
+        BlocProvider(
+            create: (_) => ProfileCubit()..fetchData(uid: uid?.uid ?? "")),
+        BlocProvider(
+            create: (_) => PostsCubit(
+                commentRepoImp: commentRepo, postsRepoImp: postsRepo)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

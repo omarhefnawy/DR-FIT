@@ -1,12 +1,11 @@
-import 'package:dr_fit/core/network/api/body_part.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
-import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_type.dart';
-import 'package:dr_fit/features/exercises/presentation/screens/exercises_view.dart';
+import 'package:dr_fit/features/home/presentation/widgets/post_card.dart';
+import 'package:dr_fit/features/home/presentation/widgets/workout_card.dart';
+import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
+import 'package:dr_fit/features/posts/presetation/cubit/posts_state.dart';
+import 'package:dr_fit/features/posts/presetation/screens/add_post.dart';
 import 'package:dr_fit/features/profile/presentation/profile_cubit.dart';
 import 'package:dr_fit/features/profile/presentation/profile_screen.dart';
 import 'package:dr_fit/features/profile/presentation/profile_states.dart';
@@ -15,13 +14,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DrFitLayout extends StatefulWidget {
-  DrFitLayout({super.key, required this.name});
-  String name;
+  DrFitLayout({super.key});
+
   @override
   State<DrFitLayout> createState() => _DrFitLayoutState();
 }
 
 class _DrFitLayoutState extends State<DrFitLayout> {
+  @override
+  void initState() {
+    super.initState();
+    // جلب البوستات عند فتح الصفحة
+    context.read<PostsCubit>().fetchAllPosts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,15 +62,35 @@ class _DrFitLayoutState extends State<DrFitLayout> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
-          textDirection: TextDirection.rtl,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // زر رفع بوست جديد
+            TextButton(
+              onPressed: () {
+                navigateTo(context, AddPostScreen());
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(Icons.upload),
+                  SizedBox(width: 5),
+                  Text(
+                    'u p l o a d P o s t',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+
+            // نص ترحيبي
             Text(
-              textDirection: TextDirection.rtl,
               'لقد حان الوقت لكي تخطط جدولك.',
               style: TextStyle(color: Colors.black54),
             ),
+
             SizedBox(height: 20),
+
+            // زر بدء تمرين جديد
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
@@ -81,19 +107,10 @@ class _DrFitLayoutState extends State<DrFitLayout> {
                 ),
               ),
             ),
+
             SizedBox(height: 40),
-            Center(
-              child: IconButton(
-                  onPressed: () {
-                    BlocProvider.of<LoginCubit>(context, listen: false)
-                        .signOut();
-                  },
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.black,
-                  )),
-            ),
-            SizedBox(height: 40),
+
+            // بطاقات التمارين والروتين
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -117,6 +134,57 @@ class _DrFitLayoutState extends State<DrFitLayout> {
                 ),
               ],
             ),
+
+            SizedBox(height: 20),
+
+            // البوستات هتظهر هنا بشكل صحيح تحت workout card
+            Expanded(
+              child: BlocBuilder<PostsCubit, PostsStates>(
+                builder: (context, state) {
+                  if (state is PostsLoadingState) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is PostsLoadedState) {
+                    final posts = state.posts;
+                    return ListView.separated(
+                      itemCount: posts.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        return BlocBuilder<ProfileCubit, ProfileStates>(
+                          builder: (context, profileState) {
+                            String userName = '';
+                            String uid = '';
+                            bool isOwner = false;
+                            final currentUser =
+                                FirebaseAuth.instance.currentUser;
+                            if (profileState is ProfileLoaded) {
+                              userName = profileState.profileData.name;
+                              uid = profileState.profileData.uid;
+                              //isOwner = post.uid == currentUser?.uid;
+                            }
+                            return PostCard(
+                              userId: uid,
+                              name: userName,
+                              post: post,
+                              isOwner: isOwner,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  } else if (state is PostsFailState) {
+                    return Center(
+                      child: Text(
+                        'حدث خطأ: ${state.error}',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                  return Center(child: Text('لا يوجد بوستات حتى الآن.'));
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -126,9 +194,11 @@ class _DrFitLayoutState extends State<DrFitLayout> {
           if (value == 3) {
             final uid = FirebaseAuth.instance.currentUser;
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfileScreen(uid: uid!.uid)));
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(uid: uid!.uid),
+              ),
+            );
           }
         },
         type: BottomNavigationBarType.fixed,
@@ -143,55 +213,6 @@ class _DrFitLayoutState extends State<DrFitLayout> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'أنا'),
           BottomNavigationBarItem(
               icon: Icon(Icons.food_bank_outlined), label: 'التغذيه'),
-        ],
-      ),
-    );
-  }
-}
-
-class WorkoutCard extends StatelessWidget {
-  final String title;
-  final String imagePath;
-  final IconData icon;
-
-  const WorkoutCard({
-    super.key,
-    required this.title,
-    required this.imagePath,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      height: 160,
-      decoration: BoxDecoration(
-        color: bottomNavigationBar,
-        borderRadius: BorderRadiusDirectional.circular(15),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 94.17,
-            child: Image(
-              image: AssetImage(imagePath),
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Icon(
-            icon,
-            color: Colors.white,
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            title,
-            style: TextStyle(color: Colors.white),
-          ),
         ],
       ),
     );

@@ -17,7 +17,7 @@ dependencies:
   shared_preferences: ^2.3.2
   bloc_provider: ^1.0.0
   flutter_bloc: ^8.1.6
-  fluttertoast: ^8.2.8
+  fluttertoast: ^8.2.12
   firebase_core: ^3.8.0
   firebase_auth: ^5.3.3
   google_sign_in: ^6.2.2
@@ -30,6 +30,8 @@ dependencies:
   conditional_builder_null_safety: ^0.0.6
   google_mlkit_translation: ^0.12.0
   slang_gpt: ^0.11.0
+  flutter_image_compress: ^2.4.0
+  intl:
 #  flutter_native_splash: ^2.4.2
 #  flutter_launcher_icons: ^0.14.1
 

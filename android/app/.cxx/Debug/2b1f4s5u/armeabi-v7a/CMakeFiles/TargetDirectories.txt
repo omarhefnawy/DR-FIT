@@ -1,0 +1,2 @@
+E:/project/DR-FIT/android/app/.cxx/Debug/2b1f4s5u/armeabi-v7a/CMakeFiles/edit_cache.dir
+E:/project/DR-FIT/android/app/.cxx/Debug/2b1f4s5u/armeabi-v7a/CMakeFiles/rebuild_cache.dir

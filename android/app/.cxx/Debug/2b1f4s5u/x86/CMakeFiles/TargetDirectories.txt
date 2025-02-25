@@ -1,0 +1,2 @@
+E:/project/DR-FIT/android/app/.cxx/Debug/2b1f4s5u/x86/CMakeFiles/edit_cache.dir
+E:/project/DR-FIT/android/app/.cxx/Debug/2b1f4s5u/x86/CMakeFiles/rebuild_cache.dir

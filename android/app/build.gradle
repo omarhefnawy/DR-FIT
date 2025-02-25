@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.example.dr_fit"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

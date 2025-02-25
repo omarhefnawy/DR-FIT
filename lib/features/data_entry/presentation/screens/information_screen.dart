@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dr_fit/core/network/local/cache_helper.dart';
+import 'package:dr_fit/core/shared/about_images.dart';
 import 'package:dr_fit/features/storage/data/repo_imp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
-import 'package:dr_fit/features/home/layout.dart';
+import 'package:dr_fit/features/home/presentation/screens/layout.dart';
 
 class InformationScreen extends StatefulWidget {
   final double weight, height;
@@ -29,15 +31,14 @@ class _InformationScreenState extends State<InformationScreen> {
   TextEditingController ageController = TextEditingController();
 
   File? _selectedImage;
-  final picker = ImagePicker();
   final storageRepo = UploadProfileImageStorageRepoImp();
 
   // Function to pick an image
   Future<void> pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    File? image = await ImageServices.pickImage();
+    if (image != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImage = image;
       });
     }
   }
@@ -70,6 +71,7 @@ class _InformationScreenState extends State<InformationScreen> {
         'img': imageUrl ?? '', // Save image URL or empty string if no image
       });
       print('✅ User data saved successfully');
+      CacheHelper.setData(key: 'dataSaved', value: true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ User data saved successfully'),
@@ -77,11 +79,7 @@ class _InformationScreenState extends State<InformationScreen> {
         ),
       );
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DrFitLayout(
-                    name: nameController.text.trim(),
-                  )));
+          context, MaterialPageRoute(builder: (context) => DrFitLayout()));
     } catch (e) {
       print('❌ Error saving user data: $e');
     }

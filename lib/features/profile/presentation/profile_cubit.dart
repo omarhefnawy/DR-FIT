@@ -22,7 +22,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
         return null;
       }
 
-      print('✅ Data fetched successfully for UID: ${doc.data()}');
+      print('✅ Data fetched successfully for UID');
       emit(ProfileLoaded(
           profileData:
               ProfileData.fromMap(uid, doc.data() as Map<String, dynamic>)));
