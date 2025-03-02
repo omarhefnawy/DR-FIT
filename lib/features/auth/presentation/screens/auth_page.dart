@@ -2,7 +2,7 @@ import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/weight_picker_screen.dart';
-import 'package:dr_fit/features/home/presentation/screens/layout.dart';
+import 'package:dr_fit/features/layout/presentation/screens/layout.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

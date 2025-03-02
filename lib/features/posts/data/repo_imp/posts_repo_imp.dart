@@ -36,6 +36,7 @@ class PostsRepoImp implements PostRepo {
           await fireBaseFireStore.collection('posts').get();
 
       return posts.docs.map((data) {
+        print(data.data());
         return PostModel.fromJson(data.data() as Map<String, dynamic>);
       }).toList();
     } catch (e) {
@@ -82,9 +83,7 @@ class PostsRepoImp implements PostRepo {
 
   // تحديث منشور
   @override
-  Future<void> updatePost(
-      {required String postId,
-      required Map<String, dynamic> updatedData}) async {
+  Future<void> updatePost({required String postId, required Map<String, dynamic> updatedData}) async {
     try {
       await fireBaseFireStore
           .collection('posts')

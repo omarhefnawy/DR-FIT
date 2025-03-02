@@ -6,7 +6,7 @@ import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dar
 import 'package:dr_fit/features/data_entry/presentation/screens/weight_picker_screen.dart';
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:dr_fit/features/exercises/controller/controller_translate/translate_cubit.dart';
-import 'package:dr_fit/features/home/presentation/screens/layout.dart';
+import 'package:dr_fit/features/layout/presentation/screens/layout.dart';
 import 'package:dr_fit/features/onboarding/controller/onboarding_cubit.dart';
 import 'package:dr_fit/features/onboarding/view/page/onboarding_page.dart';
 import 'package:dr_fit/features/posts/data/repo_imp/comment_repo_imp.dart';

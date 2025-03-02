@@ -33,6 +33,7 @@ dependencies:
   flutter_image_compress: ^2.4.0
   intl:
   uuid: ^4.5.1
+  awesome_dialog: ^3.2.1
 #  flutter_native_splash: ^2.4.2
 #  flutter_launcher_icons: ^0.14.1
 
