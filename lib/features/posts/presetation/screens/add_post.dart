@@ -13,6 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddPostScreen extends StatefulWidget {
+ final String userName;
+
+  const AddPostScreen({required this.userName});
   @override
   _AddPostScreenState createState() => _AddPostScreenState();
 }
@@ -52,6 +55,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       final String uid = FirebaseAuth.instance.currentUser!.uid;
 
       PostModel newPost = PostModel(
+        userName:widget.userName,
         postId: postId,
         uid: uid,
         post: _postController.text,

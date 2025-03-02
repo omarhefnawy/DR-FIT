@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
-import 'package:dr_fit/features/home/presentation/screens/layout.dart';
+import 'package:dr_fit/features/layout/presentation/screens/layout.dart';
 
 class InformationScreen extends StatefulWidget {
   final double weight, height;

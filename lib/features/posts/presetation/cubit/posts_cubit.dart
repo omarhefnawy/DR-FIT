@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/features/posts/data/models/comments_model.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 import 'package:dr_fit/features/posts/data/repo_imp/comment_repo_imp.dart';
@@ -93,6 +94,50 @@ class PostsCubit extends Cubit<PostsStates> {
       emit(PostsFailState(error: e.toString()));
     }
   }
+  
+ Future<void> updatePost({
+  required String postId,
+  String? newText,
+  String? newImageUrl,
+}) async {
+  try {
+    // بناء البيانات الجديدة فقط إذا كانت موجودة
+    Map<String, dynamic> updatedData = {};
+    if (newText != null && newText.isNotEmpty) {
+      updatedData['post'] = newText; // ✅ استخدام 'post' بدلاً من 'text'
+    }
+    if (newImageUrl != null && newImageUrl.isNotEmpty) {
+      updatedData['image'] = newImageUrl; // ✅ استخدام 'image' بدلاً من 'imageUrl'
+    }
+    updatedData['updatedAt'] = FieldValue.serverTimestamp(); // 🔥 تحديث التاريخ
+
+    if (updatedData.isEmpty) {
+      print('No new data to update.');
+      return;
+    }
+
+    await postsRepoImp.updatePost(postId: postId, updatedData: updatedData);
+
+    // ✅ تحديث البوست محليًا باستخدام copyWith()
+    for (int i = 0; i < posts.length; i++) {
+      if (posts[i].postId == postId) {
+        posts[i] = posts[i].copyWith(
+          post: newText ?? posts[i].post,
+          image: newImageUrl ?? posts[i].image,
+        );
+        break;
+      }
+    }
+
+    emit(PostsLoadedState(posts: posts)); // 🔥 تحديث الواجهة مباشرة
+    print('Post updated successfully.');
+  } catch (e) {
+    print('Error updating the post: ${e.toString()}');
+    emit(PostsFailState(error: e.toString()));
+  }
+}
+
+
 
   // ✅ حذف تعليق بدون تحميل كل التعليقات
   Future<void> deleteComment(
@@ -133,4 +178,6 @@ class PostsCubit extends Cubit<PostsStates> {
       emit(PostsFailState(error: e.toString()));
     }
   }
+
+
 }

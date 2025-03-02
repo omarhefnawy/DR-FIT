@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/comments_model.dart';
@@ -78,13 +79,26 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                           itemCount: state.comments.length,
                           itemBuilder: (context, index) {
                             final comment = state.comments[index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                child: Text(widget.name[0].toUpperCase()),
-                              ),
-                              title: Text(comment.comment),
-                              subtitle: Text(
-                                comment.time.toDate().toLocal().toString(),
+                            return InkWell(
+                              onLongPress: () {
+                                AwesomeDialog(
+                                  context: context,
+                                  dialogType: DialogType.question,
+                                  title: 'تأكيد',
+                                  btnOkText: 'حذف',
+                                  btnOkOnPress: () {
+                                    context.read<PostsCubit>().deleteComment(uid: uid, postId: widget.postId, commentId: comment.commentId);
+                                  },
+                                ).show();
+                              },
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Text(widget.name[0].toUpperCase()),
+                                ),
+                                title: Text(comment.comment),
+                                subtitle: Text(
+                                  comment.time.toDate().toLocal().toString(),
+                                ),
                               ),
                             );
                           },

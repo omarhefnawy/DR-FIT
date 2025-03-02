@@ -3,7 +3,7 @@ import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
-import 'package:dr_fit/features/home/presentation/widgets/post_card.dart';
+import 'package:dr_fit/features/layout/presentation/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dr_fit/features/profile/presentation/edit_profile.dart';
@@ -36,12 +36,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
-        leading: IconButton(
-            onPressed: () {
-              context.read<PostsCubit>().fetchAllPosts();
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back)),
+        // leading: IconButton(
+        //     onPressed: () {
+        //       context.read<PostsCubit>().fetchAllPosts();
+        //       //Navigator.pop(context);
+        //     },
+        //     icon: Icon(Icons.arrow_back)),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 20),
