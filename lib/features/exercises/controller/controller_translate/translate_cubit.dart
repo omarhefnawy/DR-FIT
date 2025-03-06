@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:dr_fit/core/network/api/translotor.dart';
+import 'package:dr_fit/core/network/api/translate/translotor.dart';
 part 'translate_state.dart';
 
 class TranslateCubit extends Cubit<TranslateState> {

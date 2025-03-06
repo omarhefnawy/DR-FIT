@@ -1,3 +1,4 @@
+import 'package:dr_fit/features/recipe/presentation/screen/recipe_view.dart';
 import 'package:flutter/material.dart';
 
 class Food extends StatelessWidget {
@@ -5,6 +6,6 @@ class Food extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('food'));
+    return RecipeView();
   }
 }

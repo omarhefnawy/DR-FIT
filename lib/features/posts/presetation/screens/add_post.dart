@@ -6,14 +6,14 @@ import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 import 'package:dr_fit/features/posts/domain/repo/posts_repo.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
+import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddPostScreen extends StatefulWidget {
- final String userName;
+  final String userName;
 
   const AddPostScreen({required this.userName});
   @override
@@ -55,7 +55,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       final String uid = FirebaseAuth.instance.currentUser!.uid;
 
       PostModel newPost = PostModel(
-        userName:widget.userName,
+        userName: widget.userName,
         postId: postId,
         uid: uid,
         post: _postController.text,

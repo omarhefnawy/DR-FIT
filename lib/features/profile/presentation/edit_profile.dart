@@ -1,7 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/profile/data/model/user_data.dart';
-import 'package:dr_fit/features/profile/presentation/profile_cubit.dart';
+import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/storage/data/repo_imp.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -85,8 +86,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         name: widget.data.name, // Use a unique name for the file
         file: _image!,
       );
+      log(imageUrl.toString());
     }
-
     // Create the updated ProfileData object
     ProfileData updatedData = widget.data.copyWith(
       name: nameController.text,

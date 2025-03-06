@@ -2,8 +2,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/comments_model.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_state.dart';
+import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
+import 'package:dr_fit/features/posts/cubit/posts_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -87,7 +87,10 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                                   title: 'تأكيد',
                                   btnOkText: 'حذف',
                                   btnOkOnPress: () {
-                                    context.read<PostsCubit>().deleteComment(uid: uid, postId: widget.postId, commentId: comment.commentId);
+                                    context.read<PostsCubit>().deleteComment(
+                                        uid: uid,
+                                        postId: widget.postId,
+                                        commentId: comment.commentId);
                                   },
                                 ).show();
                               },

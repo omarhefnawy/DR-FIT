@@ -1,16 +1,18 @@
+import 'dart:developer';
+
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/layout/presentation/widgets/post_card.dart';
+import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dr_fit/features/profile/presentation/edit_profile.dart';
-import 'package:dr_fit/features/profile/presentation/profile_cubit.dart';
-import 'package:dr_fit/features/profile/presentation/profile_states.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_state.dart';
+import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
+import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
+import 'package:dr_fit/features/posts/cubit/posts_state.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -35,13 +37,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
+        forceMaterialTransparency: true,
+        elevation: 0,
+        automaticallyImplyLeading: false,
         backgroundColor: kPrimaryColor,
-        // leading: IconButton(
-        //     onPressed: () {
-        //       context.read<PostsCubit>().fetchAllPosts();
-        //       //Navigator.pop(context);
-        //     },
-        //     icon: Icon(Icons.arrow_back)),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 20),
@@ -61,81 +60,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (profileState is ProfileLoaded) {
             final profile = profileState.profileData;
-
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  // صورة البروفايل
-                  Center(
-                    child: CircleAvatar(
-                      backgroundColor: kPrimaryColor,
-                      radius: 60,
-                      backgroundImage: profile.img.isNotEmpty
-                          ? NetworkImage(profile.img)
-                          : const AssetImage('assets/logo/logo.png')
-                              as ImageProvider,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // معلومات المستخدم
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        textDirection: TextDirection.rtl,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildInfoRow('الاسم:', profile.name),
-                          _buildInfoRow('العمر:', profile.age),
-                          _buildInfoRow('الطول:', '${profile.height} سم'),
-                          _buildInfoRow('الوزن:', '${profile.weight} كجم'),
-                          _buildInfoRow('رقم الهاتف:', profile.phone),
-                        ],
+            log(profile.img);
+            return SingleChildScrollView(
+              clipBehavior: Clip.hardEdge,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // صورة البروفايل
+                    Center(
+                      child: CircleAvatar(
+                        backgroundColor: kPrimaryColor,
+                        radius: 60,
+                        backgroundImage: profile.img.isNotEmpty
+                            ? NetworkImage(profile.img)
+                            : const AssetImage('assets/logo/logo.png')
+                                as ImageProvider,
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 20),
-
-                  // زر تعديل الملف الشخصي
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(buttonPrimaryColor),
+                    // معلومات المستخدم
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditProfileScreen(data: profile),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'تعديل الملف الشخصي',
-                        style: TextStyle(
-                          color: kSecondryColor,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          textDirection: TextDirection.rtl,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoRow('الاسم:', profile.name),
+                            _buildInfoRow('العمر:', profile.age),
+                            _buildInfoRow('الطول:', '${profile.height} سم'),
+                            _buildInfoRow('الوزن:', '${profile.weight} كجم'),
+                            _buildInfoRow('رقم الهاتف:', profile.phone),
+                          ],
                         ),
                       ),
                     ),
-                  ),
-                  // log out your account
-                  BlocListener<LoginCubit, LoginStates>(
-                    listener: (context, state) {
-                      if (state is LogOutState) {
-                        navigateAndFinish(context, LoginScreen());
-                      }
-                    },
-                    child: SizedBox(
+
+                    const SizedBox(height: 20),
+
+                    // زر تعديل الملف الشخصي
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ButtonStyle(
@@ -143,39 +113,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialStateProperty.all(buttonPrimaryColor),
                         ),
                         onPressed: () {
-                          context.read<LoginCubit>().signOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  EditProfileScreen(data: profile),
+                            ),
+                          );
                         },
                         child: const Text(
-                          'تسجيل خروج  ',
+                          'تعديل الملف الشخصي',
                           style: TextStyle(
                             color: kSecondryColor,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // قسم المنشورات الخاصة بالمستخدم
-                  BlocBuilder<PostsCubit, PostsStates>(
-                    builder: (context, postsState) {
-                      if (postsState is PostsLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (postsState is PostsLoadedState) {
-                        List<PostModel> userPosts = postsState.posts;
-
-                        if (userPosts.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              'لا يوجد منشورات لهذا المستخدم.',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.grey),
-                            ),
-                          );
+                    // log out your account
+                    BlocListener<LoginCubit, LoginStates>(
+                      listener: (context, state) {
+                        if (state is LogOutState) {
+                          navigateAndFinish(context, LoginScreen());
                         }
+                      },
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(buttonPrimaryColor),
+                          ),
+                          onPressed: () {
+                            context.read<LoginCubit>().signOut();
+                          },
+                          child: const Text(
+                            'تسجيل خروج  ',
+                            style: TextStyle(
+                              color: kSecondryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
 
-                        return Expanded(
-                          child: ListView.builder(
+                    // قسم المنشورات الخاصة بالمستخدم
+                    BlocBuilder<PostsCubit, PostsStates>(
+                      builder: (context, postsState) {
+                        if (postsState is PostsLoadingState) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (postsState is PostsLoadedState) {
+                          List<PostModel> userPosts = postsState.posts;
+
+                          if (userPosts.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                'لا يوجد منشورات لهذا المستخدم.',
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.grey),
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             itemCount: userPosts.length,
                             itemBuilder: (context, index) {
                               final post = userPosts[index];
@@ -186,16 +189,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 userId: widget.uid,
                               );
                             },
-                          ),
-                        );
-                      } else {
-                        return const Center(
-                          child: Text('حدث خطأ أثناء تحميل المنشورات'),
-                        );
-                      }
-                    },
-                  ),
-                ],
+                          );
+                        } else {
+                          return const Center(
+                            child: Text('حدث خطأ أثناء تحميل المنشورات'),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           } else {

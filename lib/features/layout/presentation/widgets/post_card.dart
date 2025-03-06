@@ -2,8 +2,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_cubit.dart';
-import 'package:dr_fit/features/posts/presetation/cubit/posts_state.dart';
+import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
+import 'package:dr_fit/features/posts/cubit/posts_state.dart';
 import 'package:dr_fit/features/posts/presetation/screens/addComment.dart';
 import 'package:dr_fit/features/posts/presetation/screens/edit_post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -125,17 +125,28 @@ class PostCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // زر الإعجاب باللون الأزرق
-                      IconButton(
-                        onPressed: () {
-                          context
-                              .read<PostsCubit>()
-                              .toggleLikes(postId: post.postId, uid: userId);
-                        },
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: isLiked ? Colors.red : Colors.blue,
-                          size: 28,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            '${post.likes.length}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.redAccent,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              context.read<PostsCubit>().toggleLikes(
+                                  postId: post.postId, uid: userId);
+                            },
+                            icon: Icon(
+                              isLiked ? Icons.favorite : Icons.favorite_border,
+                              color: isLiked ? Colors.red : Colors.blue,
+                              size: 28,
+                            ),
+                          ),
+                        ],
                       ),
                       // زر التعليق
                       IconButton(

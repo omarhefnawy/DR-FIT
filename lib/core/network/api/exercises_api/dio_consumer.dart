@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:dr_fit/core/network/api/api_url.dart';
+import 'package:dr_fit/core/network/api/exercises_api/api_url.dart';
 
 class DioConsumer {
   final dio = Dio();
