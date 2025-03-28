@@ -56,8 +56,10 @@ Widget defaultFormField({
   void Function()? suffixPressed, // Use void Function()? for suffixPressed
   bool isClickable = true,
   bool isBorder = true,
+  int? maxLength,
 }) =>
     TextFormField(
+      maxLength: maxLength,
       controller: controller,
       keyboardType: type,
       obscureText: isPassword,

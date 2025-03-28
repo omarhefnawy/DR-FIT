@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
@@ -25,17 +26,25 @@ class PostCard extends StatelessWidget {
     required this.userId,
   });
 
+  // 🔹 دالة تجلب عدد التعليقات لحظيًا من Firestore
+  Stream<int> getCommentCount(String postId) {
+    return FirebaseFirestore.instance
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool my = FirebaseAuth.instance.currentUser!.uid == post.uid;
+    bool my = FirebaseAuth.instance.currentUser?.uid == post.uid;
+
     return BlocBuilder<PostsCubit, PostsStates>(
       builder: (context, state) {
         bool isLiked = post.likes.contains(userId);
 
         return InkWell(
-          // onTap: () {my?
-          //   Navigator.push(context, MaterialPageRoute(builder: (context) => EditPostScreen(postId: post.postId, value: post.post,),)):null;
-          // },
           onLongPress: () {
             if (my) {
               AwesomeDialog(
@@ -66,28 +75,30 @@ class PostCard extends StatelessWidget {
           },
 
           child: Card(
-            elevation: 5,
+            elevation: my ? 8 : 3, // ارتفاع الظل مختلف لمنشورك فقط
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
+              side: my ? const BorderSide(color: Colors.blueAccent, width: 2) : BorderSide.none, // إطار حول منشورك فقط
             ),
-            color: kPrimaryColor,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اسم المستخدم مع لون أزرق
-                  Text(
-                    my ? name : post.userName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: bottomNavigationBar,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        my ? "$name ⭐" : post.userName, // نجمة بجانب اسمك فقط
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: my ? Colors.blueAccent : bottomNavigationBar, // لون مختلف لاسمك فقط
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
-                  // نص البوست
                   Text(
                     post.post,
                     style: const TextStyle(
@@ -96,18 +107,18 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  // تاريخ النشر باللون الرمادي
                   Text(
-                    DateFormat('dd/MM/yyyy HH:mm').format(post.date.toDate()),
+                    post.date != null
+                      ? DateFormat('dd/MM/yyyy HH:mm').format(post.date!.toDate())
+                      : 'تاريخ غير متاح',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
-                  // صورة البوست (إن وجدت)
-                  if (post.image != null && post.image!.isNotEmpty)
+                  if ((post.image ?? '').isNotEmpty)
                     SizedBox(
-                      height: 260, // حجز مساحة للصورة فقط إذا كانت موجودة
+                      height: 260,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
@@ -120,16 +131,15 @@ class PostCard extends StatelessWidget {
                     ),
 
                   const SizedBox(height: 10),
-                  // صف التفاعلات (إعجاب - تعليق - حذف إن كان المالك)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // زر الإعجاب باللون الأزرق
+                      // عدد الإعجابات مع الأيقونة
                       Row(
                         children: [
                           Text(
                             '${post.likes.length}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Colors.redAccent,
                               fontWeight: FontWeight.w400,
@@ -148,36 +158,53 @@ class PostCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // زر التعليق
-                      IconButton(
-                        onPressed: () {
-                          navigateTo(
-                              context,
-                              AddCommentScreen(
-                                name: name,
-                                postId: post.postId,
-                              ));
-                        },
-                        icon: const Icon(
-                          Icons.comment,
-                          color: buttonPrimaryColor,
-                          size: 28,
-                        ),
-                      ),
-                      // زر الحذف (يظهر فقط إن كان المستخدم هو صاحب البوست)
-                      if (isOwner)
-                        IconButton(
-                          onPressed: () {
-                            context
-                                .read<PostsCubit>()
-                                .deletePost(postId: post.postId);
-                          },
-                          icon: const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                            size: 28,
+
+                      // عدد التعليقات مع الأيقونة
+                      Row(
+                        children: [
+                          StreamBuilder<int>(
+                            stream: getCommentCount(post.postId),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Text(
+                                  '...',
+                                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                                );
+                              }
+                              if (snapshot.hasError) {
+                                return const Text(
+                                  'خطأ',
+                                  style: TextStyle(fontSize: 18, color: Colors.red),
+                                );
+                              }
+                              return Text(
+                                '${snapshot.data ?? 0}', // عرض عدد التعليقات الفعلي
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              );
+                            },
                           ),
-                        ),
+                          IconButton(
+                            onPressed: () {
+                              navigateTo(
+                                context,
+                                AddCommentScreen(
+                                  userName:name ,
+                                  postId: post.postId,
+                                ),
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.comment,
+                              color: buttonPrimaryColor,
+                              size: 28,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],

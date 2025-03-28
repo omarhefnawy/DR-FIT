@@ -1,5 +1,8 @@
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_type.dart';
 import 'package:dr_fit/features/layout/presentation/widgets/post_card.dart';
 import 'package:dr_fit/features/layout/presentation/widgets/workout_card.dart';
@@ -49,12 +52,25 @@ class _DrFitLayoutState extends State<Home> {
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             );
           },
-        ),
+        ), //context.read<LoginCubit>().signOut();
         actions: [
           Icon(Icons.notifications, color: Colors.black),
           SizedBox(width: 10),
           Icon(Icons.search, color: Colors.black),
-          SizedBox(width: 10),
+          BlocListener<LoginCubit, LoginStates>(
+            listener: (context, state) {
+              if (state is LogOutState) {
+                navigateAndFinish(context, LoginScreen());
+              }
+            },
+            child: IconButton(
+              color: Colors.black,
+              onPressed: () {
+                context.read<LoginCubit>().signOut();
+              },
+              icon: Icon(Icons.login_rounded),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(

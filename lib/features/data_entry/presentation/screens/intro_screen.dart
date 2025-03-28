@@ -9,46 +9,49 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: context.height * .4,
-            child: Image(
-              image: NetworkImage(
-                'https://i.pinimg.com/originals/b6/53/4a/b6534a40c768214684c3362ca1bda9a3.png',
+    return SafeArea(
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: context.height * .4,
+                child: Image.network(
+                  'https://i.pinimg.com/originals/b6/53/4a/b6534a40c768214684c3362ca1bda9a3.png',
+                  fit: BoxFit.cover,
+                ),
               ),
-              fit: BoxFit.cover,
-            ),
-          ),
-          Spacer(),
-          Text(
-            '''الأستمرارية
+              Expanded(
+                child: Center(
+                  child: Text(
+                    '''الأستمرارية
 هي مفتاح التطور
 لا تتوقف''',
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontSize: 60,
-              fontWeight: FontWeight.bold,
-              color: buttonPrimaryColor,
-            ),
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontSize: context.width * 0.1,
+                      fontWeight: FontWeight.bold,
+                      color: buttonPrimaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: defaultButton(
+                  width: context.width * .444,
+                  function: () {
+                    navigateTo(context, WeightPickerScreen());
+                  },
+                  text: 'التالي',
+                  radius: 50,
+                ),
+              ),
+            ],
           ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: defaultButton(
-              width: context.width * .444,
-              function: () {
-                navigateTo(context, WeightPickerScreen());
-              },
-              text: 'التالي',
-              radius: 50,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

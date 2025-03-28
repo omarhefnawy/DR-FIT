@@ -1,6 +1,20 @@
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class CacheHelper {
+
+  //FlutterSecureStorage
+  final storage = FlutterSecureStorage();
+
+  Future<void> saveSecureData() async {
+    await storage.write(key: 'token', value: 'secret_token_value');
+  }
+
+  Future<void> readSecureData() async {
+    String? token = await storage.read(key: 'token');
+    print(token);
+  }
+
+  //SharedPreferences
   static SharedPreferences? sharedPreferences;
   static init() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -23,18 +37,13 @@ class CacheHelper {
     return await sharedPreferences!.setDouble(key, value);
   }
 
-  static dynamic getData({required String key, dynamic defaultValue}) {
-    // Check if sharedPreferences is initialized
-    if (sharedPreferences == null) {
-      return defaultValue;
-    }
-
-    // Retrieve the value
-    var value = sharedPreferences!.get(key);
-
-    // Return the value if it exists; otherwise, return the provided default value
-    return value ?? defaultValue;
+ static dynamic getData({required String key, dynamic defaultValue = false}) {
+  if (sharedPreferences == null) {
+    return defaultValue;
   }
+  return sharedPreferences!.get(key) ?? defaultValue;
+}
+
 
   static Future<bool> removeData({
     required String key,

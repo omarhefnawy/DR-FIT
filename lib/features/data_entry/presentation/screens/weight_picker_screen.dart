@@ -1,3 +1,4 @@
+import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
@@ -131,6 +132,7 @@ class WeightPickerState extends State<WeightPickerScreen> {
             padding: EdgeInsets.only(bottom: 20),
             child: defaultButton(
               function: () {
+                CacheHelper.setData(key: 'dataSaved', value: true);
                 navigateTo(
                     context, HeightPickerScreen(currentWeight: currentWeight));
               },

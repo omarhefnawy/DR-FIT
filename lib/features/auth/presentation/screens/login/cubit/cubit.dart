@@ -1,6 +1,10 @@
+import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
+import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dart';
 import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
+import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,27 +27,50 @@ class LoginCubit extends Cubit<LoginStates> {
     emit(LoginChangePasswordVisibilityState());
   }
 
-  Future<void> signIn({required String email, required String password}) async {
-    emit(LoginLoading());
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      emit(LoginLoaded());
-    } catch (e) {
-      emit(LoginFail(massege: e.toString()));
-    }
-  }
+ Future<void> signIn({required String email, required String password}) async {
+  emit(LoginLoading());
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: email, 
+      password: password
+    );
 
-  Future<void> signOut() async {
-    emit(LoginLoading());
-    try {
-      await FirebaseAuth.instance.signOut();
-      await GoogleSignIn().signOut();
-      emit(LogOutState());
-    } catch (e) {
-      emit(LoginFail(massege: e.toString()));
+    User? user = userCredential.user;
+
+    if (user != null && user.emailVerified) {
+      // ✅ Store login state in local storage (optional)
+      CacheHelper.setData(key: 'isLoggedIn', value: true);
+
+      emit(LoginLoaded());
+    } else {
+      await FirebaseAuth.instance.signOut(); // Ensure the user is signed out
+      emit(LoginFail(massege: "Please verify your email before signing in."));
     }
+  } catch (e) {
+    emit(LoginFail(massege: e.toString()));
   }
+}
+
+
+
+
+
+ Future<void> signOut() async {
+  emit(LoginLoading());
+  try {
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
+    
+    // ✅ حذف بيانات التخزين المحلي لضمان تسجيل الخروج التام
+    CacheHelper.removeData(key: 'isLoggedIn');
+    
+    emit(LogOutState());
+  } catch (e) {
+    emit(LoginFail(massege: e.toString()));
+  }
+}
+
+
 
   Future<void> signWithGoogle(BuildContext context) async {
     emit(GoogleInitial());

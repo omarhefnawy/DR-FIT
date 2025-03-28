@@ -72,6 +72,7 @@ class _InformationScreenState extends State<InformationScreen> {
       });
       print('✅ User data saved successfully');
       CacheHelper.setData(key: 'dataSaved', value: true);
+      print('${CacheHelper.sharedPreferences!.getBool('dataSaved')}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ User data saved successfully'),
@@ -180,6 +181,7 @@ class _InformationScreenState extends State<InformationScreen> {
                   ),
                   SizedBox(height: context.height * .03),
                   defaultFormField(
+                    maxLength: 11,
                     controller: phoneController,
                     type: TextInputType.phone,
                     validate: (value) {

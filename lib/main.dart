@@ -20,6 +20,7 @@ Future<void> main() async {
   Bloc.observer = MyBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   CacheHelper.init();
+  print("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅القيمة المحفوظة عند بدء التطبيق: ${CacheHelper.getData(key: 'dataSaved')}");
   await Firebase.initializeApp();
   final postsRepo = PostsRepoImp(); // 🔥 إنشاء مرة واحدة فقط
   final commentRepo = CommentRepoImp();

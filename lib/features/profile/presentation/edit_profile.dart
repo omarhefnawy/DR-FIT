@@ -160,15 +160,31 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              _buildTextField('الاسم', nameController),
-              _buildTextField('العمر', ageController,
-                  keyboardType: TextInputType.number),
-              _buildTextField('الطول (سم)', heightController,
-                  keyboardType: TextInputType.number),
-              _buildTextField('الوزن (كجم)', weightController,
-                  keyboardType: TextInputType.number),
-              _buildTextField('رقم الهاتف', phoneController,
-                  keyboardType: TextInputType.phone),
+              _buildTextField(
+                label: 'الاسم',
+                controller: nameController,
+              ),
+              _buildTextField(
+                label: 'العمر',
+                controller: ageController,
+                keyboardType: TextInputType.number,
+              ),
+              _buildTextField(
+                label: 'الطول (سم)',
+                controller: heightController,
+                keyboardType: TextInputType.number,
+              ),
+              _buildTextField(
+                label: 'الوزن (كجم)',
+                controller: weightController,
+                keyboardType: TextInputType.number,
+              ),
+              _buildTextField(
+                label: 'رقم الهاتف',
+                controller: phoneController,
+                maxLength: 11,
+                keyboardType: TextInputType.phone,
+              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -193,11 +209,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    int? maxLength,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
+        maxLength: maxLength,
         textDirection: TextDirection.rtl,
         controller: controller,
         keyboardType: keyboardType,

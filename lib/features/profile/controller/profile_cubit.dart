@@ -12,28 +12,28 @@ class ProfileCubit extends Cubit<ProfileStates> {
   final _firestore = FirebaseFirestore.instance;
 
   Future<ProfileData?> fetchData({required String uid}) async {
-    try {
-      emit(ProfileLoading());
-      DocumentSnapshot<Map<String, dynamic>> doc =
-          await _firestore.collection('users').doc(uid).get();
+  try {
+    emit(ProfileLoading());
+    DocumentSnapshot<Map<String, dynamic>> doc =
+        await _firestore.collection('users').doc(uid).get();
 
-      if (!doc.exists) {
-        print('❌ No user data found in Firestore for UID: $uid');
-        return null;
-      }
-
-      print('✅ Data fetched successfully for UID');
-      emit(ProfileLoaded(
-          profileData:
-              ProfileData.fromMap(uid, doc.data() as Map<String, dynamic>)));
-
-      return ProfileData.fromMap(uid, doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      emit(ProfileFail(message: 'error fetching data${e.toString()}'));
-      print('❌ Error fetching profile data: $e');
+    if (!doc.exists || doc.data() == null) {
+      print('❌ لا يوجد بيانات لهذا المستخدم: $uid');
+      emit(ProfileFail(message: 'No user data found'));
       return null;
     }
+
+    ProfileData profile = ProfileData.fromMap(uid, doc.data()!);
+    print('✅ البيانات تم تحميلها بنجاح: ${profile.name}');
+
+    emit(ProfileLoaded(profileData: profile));
+    return profile;
+  } catch (e) {
+    emit(ProfileFail(message: 'Error fetching data: ${e.toString()}'));
+    return null;
   }
+}
+
 
   Future<void> updateProfile({required ProfileData data}) async {
     try {
