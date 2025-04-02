@@ -1,18 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class CacheHelper {
-
-  //FlutterSecureStorage
-  final storage = FlutterSecureStorage();
-
-  Future<void> saveSecureData() async {
-    await storage.write(key: 'token', value: 'secret_token_value');
-  }
-
-  Future<void> readSecureData() async {
-    String? token = await storage.read(key: 'token');
-    print(token);
-  }
 
   //SharedPreferences
   static SharedPreferences? sharedPreferences;

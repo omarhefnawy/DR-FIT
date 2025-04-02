@@ -66,6 +66,7 @@ class PostCard extends StatelessWidget {
                       builder: (context) => EditPostScreen(
                         postId: post.postId,
                         value: post.post,
+                        imageUrl: post.image??'',
                       ),
                     ),
                   );

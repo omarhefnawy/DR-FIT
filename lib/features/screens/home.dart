@@ -52,28 +52,22 @@ class _DrFitLayoutState extends State<Home> {
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             );
           },
-        ), //context.read<LoginCubit>().signOut();
+        ),
         actions: [
           Icon(Icons.notifications, color: Colors.black),
           SizedBox(width: 10),
           Icon(Icons.search, color: Colors.black),
-          BlocListener<LoginCubit, LoginStates>(
-            listener: (context, state) {
-              if (state is LogOutState) {
-                navigateAndFinish(context, LoginScreen());
-              }
+          IconButton(
+            color: Colors.black,
+            onPressed: () {
+              _showLogoutDialog(context);
             },
-            child: IconButton(
-              color: Colors.black,
-              onPressed: () {
-                context.read<LoginCubit>().signOut();
-              },
-              icon: Icon(Icons.login_rounded),
-            ),
+            icon: Icon(Icons.logout),
           ),
         ],
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         clipBehavior: Clip.hardEdge,
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -96,11 +90,15 @@ class _DrFitLayoutState extends State<Home> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(Icons.upload),
+                    Icon(
+                      Icons.upload,
+                      color: Colors.blue,
+                    ),
                     SizedBox(width: 5),
                     Text(
                       'u p l o a d P o s t',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
                   ],
                 ),
@@ -162,7 +160,7 @@ class _DrFitLayoutState extends State<Home> {
 
               SizedBox(height: 20),
 
-              // البوستات هتظهر هنا بشكل صحيح تحت workout card
+              // البوستات
               BlocBuilder<PostsCubit, PostsStates>(
                 builder: (context, state) {
                   if (state is PostsLoadingState) {
@@ -211,6 +209,41 @@ class _DrFitLayoutState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('تأكيد تسجيل الخروج'),
+          content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // إغلاق مربع الحوار
+              },
+              child: Text('لا', style: TextStyle(color: Colors.grey)),
+            ),
+            BlocListener<LoginCubit, LoginStates>(
+              listener: (context, state) {
+                if (state is LogOutState) {
+                  Navigator.of(context).pop();
+                  navigateAndFinish(context, LoginScreen());
+                }
+              },
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  navigateAndFinish(context, LoginScreen());
+                },
+                child: Text('نعم', style: TextStyle(color: Colors.red)),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
