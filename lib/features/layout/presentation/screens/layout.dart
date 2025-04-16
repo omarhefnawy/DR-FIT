@@ -44,6 +44,7 @@ class _DrFitLayoutState extends State<DrFitLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPrimaryColor,
+      // floatingActionButton: IconButton( icon:Icon(Icons.search), onPressed: () { },),
       body: screens[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
