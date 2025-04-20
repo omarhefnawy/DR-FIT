@@ -1,12 +1,10 @@
-import 'package:flutter_bloc/flutter_bloc.dart'; // ✅ أضف هذا
-import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/features/recipe/presentation/screen/recipe_view.dart';
+import 'package:dr_fit/features/screens/PostsScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; 
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:dr_fit/features/profile/presentation/profile_screen.dart';
-import 'package:dr_fit/features/recipe/presentation/screen/recipe_view.dart';
-import 'package:dr_fit/features/screens/Training.dart';
-import 'package:dr_fit/features/screens/food.dart';
 import 'package:dr_fit/features/screens/home.dart';
 import 'package:dr_fit/features/screens/statistics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,16 +33,15 @@ class _DrFitLayoutState extends State<DrFitLayout> {
         return const Center(child: CircularProgressIndicator());
       },
     ),
-    Training(),
+    PostsScreen(),
     ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid),
-    Food(),
+    RecipeView(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPrimaryColor,
-      // floatingActionButton: IconButton( icon:Icon(Icons.search), onPressed: () { },),
       body: screens[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
@@ -61,17 +58,9 @@ class _DrFitLayoutState extends State<DrFitLayout> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'إحصائيات'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'التدريب'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'أنا'),
-          BottomNavigationBarItem(
-            icon: IconButton(
-              onPressed: () {
-                navigateTo(context, RecipeView());
-              },
-              icon: Icon(Icons.fastfood_rounded),
-            ),
-            label: 'التغذيه',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'مجتمعنا'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+          BottomNavigationBarItem(icon: Icon(Icons.fastfood_rounded), label: ' التغذية '),
         ],
       ),
     );

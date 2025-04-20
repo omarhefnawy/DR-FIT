@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
-import 'package:dr_fit/core/utils/custom_appbar.dart';
 import 'package:dr_fit/features/recipe/controller/recipe_cubit.dart';
 import 'package:dr_fit/features/recipe/model/recipe_model.dart';
 import 'package:dr_fit/features/recipe/presentation/screen/recipe_details.dart';
@@ -14,7 +13,6 @@ class RecipeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(context),
       backgroundColor: kPrimaryColor,
       body: Padding(
         padding: const EdgeInsets.all(8.0),

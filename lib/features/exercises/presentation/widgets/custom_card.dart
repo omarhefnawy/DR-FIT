@@ -4,7 +4,7 @@ import 'package:dr_fit/features/exercises/model/exercise_model.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_info.dart';
 import 'package:flutter/material.dart';
 
-Widget customCard({required Exercise exercise, required context}) {
+Widget customCard({required Exercise exercise, required context,String? translatedName,}) {
   return Container(
     height: 100,
     alignment: Alignment.center,
@@ -38,7 +38,7 @@ Widget customCard({required Exercise exercise, required context}) {
         ),
         radius: 30,
       ),
-      title: Text(exercise.name),
+      title: Text(translatedName ?? exercise.name,),
       subtitle: Text(exercise.target),
     ),
   );

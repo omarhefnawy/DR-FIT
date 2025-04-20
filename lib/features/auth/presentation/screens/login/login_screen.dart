@@ -7,7 +7,6 @@ import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dar
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/features/layout/presentation/screens/layout.dart';
 import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
-import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +15,8 @@ class LoginScreen extends StatelessWidget {
   var formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
