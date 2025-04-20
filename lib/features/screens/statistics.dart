@@ -672,6 +672,7 @@ void initState() {
         ],
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
