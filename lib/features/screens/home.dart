@@ -7,6 +7,7 @@ import 'package:dr_fit/features/exercises/presentation/screens/exercises_type.da
 import 'package:dr_fit/features/layout/presentation/widgets/workout_card.dart';
 import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/profile/controller/profile_states.dart';
+import 'package:dr_fit/features/Favorite/FavoritesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -86,7 +87,9 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      navigateTo(context, FavoritesScreen());
+                    },
                     child: WorkoutCard(
                       title: 'روتينك الخاص',
                       imagePath: 'assets/images/home1.png',

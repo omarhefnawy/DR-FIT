@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/core/utils/custom_appbar.dart';
+import 'package:dr_fit/features/Favorite/cubit/favorite_cubit.dart';
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
 import 'package:dr_fit/features/exercises/controller/controller_translate/translate_cubit.dart';
 import 'package:dr_fit/features/exercises/model/exercise_model.dart';
 import 'package:dr_fit/features/exercises/presentation/widgets/custom_separate.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -18,6 +21,9 @@ class ExercisesInfo extends StatelessWidget {
 
   Exercise exercises;
   String translated = '';
+  // أضف هذه المتغيرات
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     var cubit = TranslateCubit();
@@ -27,7 +33,39 @@ class ExercisesInfo extends StatelessWidget {
           translated = state.translate;
         }
         return Scaffold(
-          appBar: customAppBar(context),
+          appBar: AppBar(
+            backgroundColor: kPrimaryColor,
+            actions: [
+              BlocBuilder<FavoriteCubit, FavoriteState>(
+                builder: (context, state) {
+                  final user = _auth.currentUser;
+                  if (user == null) return SizedBox(); 
+                  
+                  return StreamBuilder<DocumentSnapshot>(
+                    stream: _firestore
+                        .collection('favorites')
+                        .doc(user.uid)
+                        .collection('exercises')
+                        .doc(exercises.id) 
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      final isFavorite = snapshot.data?.exists ?? false;
+                      return IconButton(
+                        icon: Icon(
+                          isFavorite 
+                            ? Icons.favorite 
+                            : Icons.favorite_border,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => context.read<FavoriteCubit>()
+                            .toggleFavorite(exercises), 
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
           backgroundColor: kPrimaryColor,
           body: ConditionalBuilder(
             condition: state is TranslateLoading,

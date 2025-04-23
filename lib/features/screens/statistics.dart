@@ -145,21 +145,35 @@ void initState() {
   }
 
   Future<void> _loadWaterData() async {
-    await CacheHelper.init();
-    final lastDateString = CacheHelper.getData(key: 'lastWaterDate');
-    if (lastDateString != null) {
-      lastUpdatedDate = DateTime.parse(lastDateString);
+  await CacheHelper.init();
+  
+  // تحقق من نوع البيانات المخزنة
+  final lastDateData = CacheHelper.getData(key: 'lastWaterDate');
+  
+  if (lastDateData != null && lastDateData is String) {
+    try {
+      lastUpdatedDate = DateTime.parse(lastDateData);
+    } catch (e) {
+      print('⚠️ خطأ في تحويل lastWaterDate: $e');
+      await _resetLastWaterDate();
     }
-
-    if (lastUpdatedDate == null ||
-        !DateUtils.isSameDay(lastUpdatedDate!, DateTime.now())) {
-      await _resetWaterIntake();
-    } else {
-      setState(() {
-        waterIntake = CacheHelper.getData(key: 'waterIntake', defaultValue: 0);
-      });
-    }
+  } else {
+    print('⚠️ lastWaterDate غير موجود أو ليس نصًا');
+    await _resetLastWaterDate();
   }
+
+  // تحميل كمية الماء
+  final waterData = CacheHelper.getData(key: 'waterIntake');
+  setState(() {
+    waterIntake = (waterData is int) ? waterData : 0;
+  });
+
+  // التحقق من تغيير التاريخ
+  if (lastUpdatedDate == null || 
+      !DateUtils.isSameDay(lastUpdatedDate!, DateTime.now())) {
+    await _resetWaterIntake();
+  }
+}
 
   Future<void> _checkDateChange() async {
     final dynamic lastDateData = CacheHelper.getData(key: 'lastWaterDate');

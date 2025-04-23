@@ -1,5 +1,6 @@
 import 'package:dr_fit/bloc_observer.dart';
 import 'package:dr_fit/core/network/local/cache_helper.dart';
+import 'package:dr_fit/features/Favorite/cubit/favorite_cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/auth_page.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => ExerciseCubit()),
         BlocProvider(create: (_) => OnboardingCubit()),
         BlocProvider(create: (_) => TranslateCubit()),
+        BlocProvider(create: (_) => FavoriteCubit()),
         BlocProvider(create: (_) => RecipeCubit()..fetchHealthyRecipes()),
         BlocProvider(
             create: (_) => ProfileCubit()..fetchData(uid: uid?.uid ?? "")),

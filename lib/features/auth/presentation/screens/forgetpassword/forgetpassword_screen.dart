@@ -60,29 +60,27 @@ class ForgetpasswordScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 60),
                           child: defaultButton(
-                            function: () {
+                            function: () async {
                               if (formKey.currentState!.validate()) {
                                 var email = emailController.text.trim();
-                                //here reset code
                                 try {
-                                  FirebaseAuth.instance
+                                  await FirebaseAuth.instance
                                       .sendPasswordResetEmail(email: email);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content:
-                                          Text("Check you Email sir password"),
-                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                          "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"),
+                                      backgroundColor: Colors.green,
                                     ),
                                   );
                                   Future.delayed(Duration(seconds: 3), () {
-                                    Navigator.pop(
-                                        context); // Navigate back to the previous page
+                                    Navigator.pop(context);
                                   });
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content:
-                                          Text("error sending reset password"),
+                                      content: Text(
+                                          "حدث خطأ أثناء إرسال رابط إعادة التعيين: $e"),
                                       backgroundColor: Colors.red,
                                     ),
                                   );

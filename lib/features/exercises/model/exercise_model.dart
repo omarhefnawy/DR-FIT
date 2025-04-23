@@ -47,6 +47,34 @@ class Exercise {
     };
   }
 
+  // إضافة دالة لتحويل الموديل إلى Map (مطلوب لـ Firestore)
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'target': target,
+      'equipment': equipment,
+      'gifUrl': gifUrl,
+      'bodyPart': bodyPart,
+      'secondaryMuscles': secondaryMuscles,
+      'instructions': instructions,
+    };
+  }
+
+  // دالة لتحويل Map من Firestore إلى الموديل
+  factory Exercise.fromMap(Map<String, dynamic> map) {
+    return Exercise(
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      target: map['target'] ?? '',
+      equipment: map['equipment'] ?? '',
+      gifUrl: map['gifUrl'] ?? '',
+      bodyPart: map['bodyPart'] ?? '',
+      secondaryMuscles: List<String>.from(map['secondaryMuscles'] ?? []),
+      instructions: List<String>.from(map['instructions'] ?? []),
+    );
+  }
+
   static List<Exercise> listFromJson(jsonString) {
     List<dynamic> jsonData = json.decode(jsonString);
     return jsonData.map((item) => Exercise.fromJson(item)).toList();
