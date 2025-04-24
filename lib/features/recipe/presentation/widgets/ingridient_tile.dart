@@ -16,13 +16,13 @@ class IngridientTile extends StatelessWidget {
           border: Border(
               bottom: BorderSide(color: Colors.grey.shade300, width: 1))),
       child: Row(
-        //textDirection: TextDirection.rtl,
+        textDirection: TextDirection.rtl,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
             flex: 3,
             child: Text(
-              // textDirection: TextDirection.rtl,
+              textDirection: TextDirection.rtl,
               '$data',
               style: TextStyle(
                   fontSize: 16,

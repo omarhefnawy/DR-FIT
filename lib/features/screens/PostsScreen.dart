@@ -1,4 +1,6 @@
 import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/features/layout/presentation/widgets/post_card.dart';
 import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
 import 'package:dr_fit/features/posts/cubit/posts_state.dart';
@@ -7,6 +9,7 @@ import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class PostsScreen extends StatelessWidget {
   const PostsScreen({super.key});
@@ -38,7 +41,32 @@ class PostsScreen extends StatelessWidget {
       body: BlocBuilder<PostsCubit, PostsStates>(
         builder: (context, state) {
           if (state is PostsLoadingState) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      textDirection: TextDirection.rtl,
+                      '     جاري التحميل..   ',
+                      style: TextStyle(
+                          color: buttonPrimaryColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: context.height * .1,
+                    ),
+                    LoadingAnimationWidget.flickr(
+                      leftDotColor: buttonPrimaryColor,
+                      rightDotColor: bottomNavigationBar,
+                      size: 100,
+                    ),
+                  ],
+                ),
+              ),
+            );
           } else if (state is PostsLoadedState) {
             final posts = state.posts;
             return ListView.separated(

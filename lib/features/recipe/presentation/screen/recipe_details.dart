@@ -1,18 +1,17 @@
 import 'package:dr_fit/core/utils/constants.dart';
-import 'package:dr_fit/features/exercises/controller/controller_translate/translate_cubit.dart';
-import 'package:dr_fit/features/recipe/model/recipe_model.dart';
-import 'package:dr_fit/features/recipe/presentation/screen/full_screen_image.dart';
-import 'package:dr_fit/features/recipe/presentation/widgets/ingridient_tile.dart';
-import 'package:dr_fit/features/recipe/presentation/widgets/step_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dr_fit/features/recipe/model/recipe_model.dart';
+import 'package:dr_fit/features/recipe/presentation/widgets/ingridient_tile.dart';
+import 'package:dr_fit/features/recipe/presentation/widgets/step_tile.dart';
+import 'package:dr_fit/features/recipe/presentation/screen/full_screen_image.dart';
 
 class RecipeDetailPage extends StatefulWidget {
   final Recipe data;
   final String title;
   final List<String> instructions;
   final List<String> ingredients;
+
   const RecipeDetailPage({
     super.key,
     required this.data,
@@ -31,7 +30,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
   ScrollController? _scrollController;
   Color appBarColor = Colors.transparent;
 
-  List<String> instructions = [];
   @override
   void initState() {
     super.initState();
@@ -47,7 +45,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
     if (scrollController.position.hasPixels) {
       if (scrollController.position.pixels > 4.0) {
         setState(() {
-          appBarColor = kPrimaryColor;
+          appBarColor =
+              kPrimaryColor; // Change this to your desired appBar color
         });
       } else {
         setState(() {
@@ -82,7 +81,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
             elevation: 0,
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios, color: buttonPrimaryColor),
+              icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -103,8 +102,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => FullScreenImage(
-                    image: Image.network(widget.data.image.toString(),
-                        fit: BoxFit.cover),
+                    image: Image.network(widget.data.image),
                   ),
                 ),
               );
@@ -114,19 +112,15 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(widget.data.image.toString()),
+                  image: NetworkImage(widget.data.image),
                   fit: BoxFit.cover,
                 ),
               ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(
-                      10,
-                    ),
-                    bottomRight: Radius.circular(
-                      10,
-                    ),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
                   ),
                 ),
                 height: 280,
@@ -138,9 +132,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(top: 20, bottom: 30, left: 16, right: 16),
-            color: buttonPrimaryColor.withOpacity(.9),
+            color: buttonPrimaryColor,
             child: Column(
-              //textDirection: TextDirection.rtl,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Calories and Time
@@ -168,7 +161,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                     Container(
                       margin: EdgeInsets.only(left: 5),
                       child: Text(
-                        '${widget.data.cookTimeMinutes + widget.data.prepTimeMinutes}',
+                        '${widget.data.cookTimeMinutes + (widget.data.prepTimeMinutes)} min',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white,
@@ -181,20 +174,18 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                 Container(
                   margin: EdgeInsets.only(bottom: 12, top: 16),
                   child: Text(
-                    //textDirection: TextDirection.rtl,
                     widget.data.name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      fontFamily: 'inter',
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          // TabBar (Ingredients, Tutorial, Reviews)
+          // TabBar (Ingredients, Tutorial)
           Container(
             height: 60,
             width: MediaQuery.of(context).size.width,
@@ -209,7 +200,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
               labelColor: Colors.black,
               unselectedLabelColor: Colors.black.withOpacity(0.6),
               labelStyle: TextStyle(
-                fontFamily: 'inter',
                 fontWeight: FontWeight.w500,
               ),
               indicatorColor: Colors.black,
@@ -226,7 +216,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
             children: [
               // Tutorial (Steps) List
               StepTile(
-                data: widget.data.instructions,
+                data: widget.instructions,
               ),
               // Ingredients List
               ListView.builder(
@@ -236,7 +226,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return IngridientTile(
-                    data: widget.data.ingredients[index],
+                    data: widget.ingredients[index],
                   );
                 },
               ),
