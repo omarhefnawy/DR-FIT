@@ -3,6 +3,7 @@ import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
+import 'package:dr_fit/features/chatboot/screens/chat_screen.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_type.dart';
 import 'package:dr_fit/features/layout/presentation/widgets/workout_card.dart';
 import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
@@ -17,6 +18,13 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.auto_awesome),
+        backgroundColor: kPrimaryColor,
+        onPressed: () {
+       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
+        },
+      ),
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
         forceMaterialTransparency: true,
