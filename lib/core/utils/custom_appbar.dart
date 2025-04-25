@@ -11,7 +11,7 @@ AppBar customAppBar(
     backgroundColor: kPrimaryColor,
     leading: GestureDetector(
       onTap: () {
-        Navigator.pop(context);
+        Navigator.of(context).pop();
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(

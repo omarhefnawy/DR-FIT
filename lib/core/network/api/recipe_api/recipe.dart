@@ -1,21 +1,39 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
-import 'package:dr_fit/features/recipe/model/recipe_model.dart';
+import 'package:dr_fit/features/recipe/model/recipe_model.dart' show Recipe;
+import 'recipe.dart';
 
-class RecipeService {
+class ApiService {
   final Dio _dio = Dio();
+  final String baseUrl = 'https://dummyjson.com/recipes';
 
-  Future<List<Recipe>> fetchRecipes() async {
+  Future<List<Recipe>> getHealthyRecipes() async {
     try {
-      Response response = await _dio.get('https://dummyjson.com/recipes');
+      final response = await _dio.get(
+        baseUrl,
+        queryParameters: {
+          'tags': 'healthy',
+          'limit': 100,
+        },
+      );
 
       if (response.statusCode == 200) {
-        List recipes = response.data['recipes']; // Access the "recipes" array
-        return recipes.map((json) => Recipe.fromJson(json)).toList();
+        final List<dynamic> recipesJson = response.data['recipes'];
+
+        final allRecipes =
+            recipesJson.map((json) => Recipe.fromJson(json)).toList();
+        log(allRecipes.length.toString());
+        // ✅ فلترة الوصفات الصحية
+        final healthyRecipes =
+            allRecipes.where((r) => r.caloriesPerServing <= 500).toList();
+        log(healthyRecipes.length.toString());
+        return healthyRecipes;
       } else {
-        throw Exception('Failed to load recipes');
+        throw Exception('فشل في تحميل الوصفات');
       }
-    } catch (error) {
-      throw Exception('Error fetching data: $error');
+    } catch (e) {
+      throw Exception('خطأ أثناء الاتصال: $e');
     }
   }
 }

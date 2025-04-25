@@ -19,11 +19,12 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.auto_awesome),
         backgroundColor: kPrimaryColor,
         onPressed: () {
-       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => ChatScreen()));
         },
+        child: Icon(Icons.auto_awesome),
       ),
       backgroundColor: kPrimaryColor,
       appBar: AppBar(

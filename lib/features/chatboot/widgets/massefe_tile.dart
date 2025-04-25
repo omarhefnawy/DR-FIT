@@ -4,7 +4,7 @@ class MessageTile extends StatelessWidget {
   final String message;
   final bool isUser;
 
-  const MessageTile({required this.message, required this.isUser});
+  const MessageTile({super.key, required this.message, required this.isUser});
 
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,11 @@
+import 'package:dr_fit/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 import '../service/gemini_service.dart';
 import '../widgets/massefe_tile.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -10,7 +13,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final GeminiService _geminiService = GeminiService();
-  List<Map<String, String>> _messages = [];
+  final List<Map<String, String>> _messages = [];
 
   void sendMessage(String message) async {
     setState(() {
@@ -27,7 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Gemini Chatbot")),
+      appBar: AppBar(title: Text("DR-Fit Bot")),
       body: Column(
         children: [
           Expanded(
@@ -43,17 +46,38 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
+                    cursorColor: Colors.black,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                    onSubmitted: (value) {
+                      final message = _controller.text.trim();
+                      if (message.isNotEmpty) {
+                        sendMessage(message);
+                        _controller.clear();
+                      }
+                    },
+                    textDirection: TextDirection.rtl,
                     controller: _controller,
-                    decoration: InputDecoration(hintText: 'اكتب رسالة...'),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      hintText: 'اكتب رسالة...',
+                      hintTextDirection: TextDirection.rtl,
+                    ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(
+                    Icons.send,
+                    color: buttonPrimaryColor,
+                  ),
                   onPressed: () {
                     final message = _controller.text.trim();
                     if (message.isNotEmpty) {

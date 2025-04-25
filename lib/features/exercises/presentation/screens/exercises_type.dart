@@ -44,14 +44,14 @@ class ExercisesType extends StatelessWidget {
     List image = [
       'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
       'https://www.bodybuildingreviews.com/wp-content/uploads/best-trap-exercises.webp',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://tfclarkfitnessmagazine.com/wp-content/uploads/2020/10/Become-a-Bodybuilder-How-to-Train-a-Comprehensive-Guide.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
-      'https://www.mundofitness.com/wp-content/uploads/Incline_Dumbbell_Bench_Press_Starting.jpg',
+      'https://barbend.com/wp-content/uploads/2023/11/training-abs-390357193.jpg',
+      'https://hips.hearstapps.com/menshealth-uk/main/thumbs/34592/shoulder-exercises.jpg',
+      'https://m.media-amazon.com/images/I/61Fx5b-dknL._AC_UF1000,1000_QL80_.jpg',
+      'https://barbend.com/wp-content/uploads/2023/02/Barbend-Featured-Image-1600x900-A-person-performing-cable-biceps-curls.jpg',
+      'https://barbend.com/wp-content/uploads/2023/02/Barbend-Featured-Image-1600x900-A-person-performing-cable-biceps-curls.jpg',
+      'https://www.thisiswhyimfit.com/wp-content/uploads/2023/12/man-doing-leg-extensions.jpg',
+      'https://cdn.thehinh.com/2016/12/huong-dan-tap-co-dui-sau-3.jpg',
+      'https://img.freepik.com/premium-photo/muscular-athlete-training-legs-exercise-machine-active-sport-exercises-gym_266732-242.jpg',
     ];
     return BlocListener<ExerciseCubit, ExerciseState>(
       listener: (context, state) {
