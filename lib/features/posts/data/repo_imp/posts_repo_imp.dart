@@ -5,6 +5,19 @@ import 'package:dr_fit/features/posts/domain/repo/posts_repo.dart';
 class PostsRepoImp implements PostRepo {
   final FirebaseFirestore fireBaseFireStore = FirebaseFirestore.instance;
 
+
+   @override
+  Stream<List<PostModel>> getPostsStream() {
+    return fireBaseFireStore
+        .collection('posts')
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => PostModel.fromJson(doc.data()..['postId'] = doc.id))
+            .toList());
+  }
+
+
   // إضافة منشور
   @override
   Future<void> addPost({required PostModel model}) async {
@@ -120,27 +133,30 @@ class PostsRepoImp implements PostRepo {
   }
 
   // تفعيل/إلغاء الإعجاب بمنشور
-  @override
-  Future<void> toggleLikes(
-      {required String uid, required String postId}) async {
-    try {
-      DocumentReference postRef =
-          fireBaseFireStore.collection('posts').doc(postId);
-
-      DocumentSnapshot snapshot = await postRef.get();
-
-      if (snapshot.exists) {
-        List<dynamic> likes =
-            (snapshot.data() as Map<String, dynamic>)['likes'] ?? [];
-
+@override
+Future<void> toggleLikes({
+  required String uid, 
+  required String postId
+}) async {
+  try {
+    final postRef = fireBaseFireStore.collection('posts').doc(postId);
+    final snapshot = await postRef.get();
+    
+    if (snapshot.exists) {
+      final currentLikes = List<String>.from(snapshot['likes'] ?? []);
+      
+      if (currentLikes.contains(uid)) {
         await postRef.update({
-          'likes': likes.contains(uid)
-              ? FieldValue.arrayRemove([uid]) // إزالة الإعجاب
-              : FieldValue.arrayUnion([uid]) // إضافة إعجاب
+          'likes': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await postRef.update({
+          'likes': FieldValue.arrayUnion([uid])
         });
       }
-    } catch (e) {
-      print('Error Toggling Like: ${e.toString()}');
     }
+  } catch (e) {
+    throw Exception('فشل تحديث الإعجابات: ${e.toString()}');
   }
+}
 }

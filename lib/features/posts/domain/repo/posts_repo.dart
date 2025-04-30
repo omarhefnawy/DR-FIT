@@ -3,6 +3,7 @@ import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 
 abstract class PostRepo {
   //  whwn implements this you need to do these methods
+  Stream<List<PostModel>> getPostsStream();
   // add post to fire base
   Future<void> addPost({required PostModel model});
   // delete post from firebase

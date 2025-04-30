@@ -1,19 +1,17 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, must_be_immutable
-
+import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/register/cubit/states.dart';
-import 'package:dr_fit/core/utils/component.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
-  var formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,30 +28,28 @@ class RegisterScreen extends StatelessWidget {
             );
           } else if (state is RegisterLoadedState) {
             try {
-              await FirebaseAuth.instance.currentUser
-                  ?.sendEmailVerification(); // Send email verification
+              await FirebaseAuth.instance.currentUser?.sendEmailVerification();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Check your email for confirmation.'),
+                  content: Text('تم إرسال رابط التفعيل إلى بريدك الإلكتروني'),
                   backgroundColor: Colors.green,
                 ),
               );
-              // Navigate to the main screen after showing the SnackBar
               Future.delayed(Duration(seconds: 2), () {
                 navigateAndFinish(context, LoginScreen());
               });
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Error sending massegs'),
-                  backgroundColor: Colors.green,
+                  content: Text('حدث خطأ في إرسال رابط التفعيل'),
+                  backgroundColor: Colors.red,
                 ),
               );
             }
           }
         },
         builder: (context, state) {
-          var cubit = BlocProvider.of<RegisterCubit>(context);
+          final cubit = BlocProvider.of<RegisterCubit>(context);
           return Scaffold(
             backgroundColor: kPrimaryColor,
             body: Center(
@@ -67,99 +63,77 @@ class RegisterScreen extends StatelessWidget {
                         Text(
                           'البدء',
                           style: TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        SizedBox(
-                          height: 60,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
+                        SizedBox(height: 60),
                         defaultFormField(
                           controller: emailController,
-                          type: TextInputType.text,
+                          type: TextInputType.emailAddress,
                           validate: (value) {
                             if (value!.isEmpty) {
-                              return ' الرجاء ادخال البريد الالكترونى';
+                              return 'الرجاء إدخال البريد الإلكتروني';
                             }
                             return null;
                           },
-                          label: 'البريد الالكترونى',
+                          label: 'البريد الإلكتروني',
                           prefix: Icons.email,
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
+                        SizedBox(height: 15),
                         defaultFormField(
                           controller: passwordController,
                           type: TextInputType.visiblePassword,
-                          suffix: RegisterCubit.get(context).isPassword
+                          suffix: cubit.isPassword
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          onSubmit: (value) {
-                            if (formKey.currentState!.validate()) {}
-                          },
-                          isPassword: RegisterCubit.get(context).isPassword,
-                          suffixPressed: RegisterCubit.get(context)
-                              .changePasswordVisibility,
+                          isPassword: cubit.isPassword,
+                          suffixPressed: cubit.changePasswordVisibility,
+                          onChange: (value) => cubit.checkPasswordStrength(value),
                           validate: (value) {
                             if (value!.isEmpty) {
-                              return 'الرجاء ادخال كلمه المرور';
+                              return 'الرجاء إدخال كلمة المرور';
+                            } else if (!RegExp(
+                                    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?~`])[A-Za-z\d!@#$%^&*()_+{}|:"<>?~`]{8,}$')
+                                .hasMatch(value)) {
+                              return 'يجب أن تحتوي كلمة المرور على:\n- 8 أحرف على الأقل\n- حرف كبير وحرف صغير\n- رقم\n- رمز خاص (@\$!%*?&)';
                             }
                             return null;
                           },
                           label: 'كلمة المرور',
                           prefix: Icons.lock,
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
+                        PasswordStrengthIndicator(strength: cubit.passwordStrength),
+                        SizedBox(height: 15),
                         defaultFormField(
                           controller: confirmPasswordController,
                           type: TextInputType.visiblePassword,
-                          suffix: RegisterCubit.get(context).isConfirmPassword
+                          suffix: cubit.isConfirmPassword
                               ? Icons.visibility
                               : Icons.visibility_off,
-                          onSubmit: (value) {
-                            if (formKey.currentState!.validate()) {}
-                          },
-                          isPassword:
-                              RegisterCubit.get(context).isConfirmPassword,
-                          suffixPressed: RegisterCubit.get(context)
-                              .changeConfirmPasswordVisibility,
+                          isPassword: cubit.isConfirmPassword,
+                          suffixPressed: cubit.changeConfirmPasswordVisibility,
                           validate: (value) {
                             if (value!.isEmpty) {
-                              return 'الرجاء تاكيد كلمه المرور';
+                              return 'الرجاء تأكيد كلمة المرور';
+                            } else if (value != passwordController.text) {
+                              return 'كلمة المرور غير متطابقة';
                             }
                             return null;
                           },
-                          label: 'تاكيد كلمه المرور',
+                          label: 'تأكيد كلمة المرور',
                           prefix: Icons.lock,
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
+                        SizedBox(height: 30),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 60),
                           child: defaultButton(
                             function: () {
                               if (formKey.currentState!.validate()) {
-                                if (confirmPasswordController.text !=
-                                    passwordController.text) {
-                                  showToast(
-                                      text:
-                                          'The Password and ConfirmPassword is not Similar',
-                                      state: ToastStates.ERROR);
-                                  return;
-                                } else {
-                                  var email = emailController.text.trim();
-                                  var password = passwordController.text.trim();
-                                  cubit.signUp(
-                                      email: email, password: password);
-                                }
+                                cubit.signUp(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
                               }
                             },
                             text: 'تسجيل',
@@ -167,22 +141,13 @@ class RegisterScreen extends StatelessWidget {
                             radius: 20,
                           ),
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
+                        SizedBox(height: 30),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              '  لديك حساب بالفعل؟',
-                            ),
+                            Text('لديك حساب بالفعل؟'),
                             defaultTextButton(
-                              function: () {
-                                navigateAndFinish(context, LoginScreen());
-                              },
+                              function: () => navigateAndFinish(context, LoginScreen()),
                               text: 'تسجيل الدخول',
                             ),
                           ],
@@ -197,5 +162,72 @@ class RegisterScreen extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class PasswordStrengthIndicator extends StatelessWidget {
+  final int strength;
+
+  const PasswordStrengthIndicator({super.key, required this.strength});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Row(
+        children: [
+          ...List.generate(3, (index) => _buildBar(index)),
+          SizedBox(width: 10),
+          Text(
+            _getStrengthText(),
+            style: TextStyle(
+              color: _getColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBar(int index) {
+    return Expanded(
+      child: Container(
+        height: 5,
+        margin: EdgeInsets.symmetric(horizontal: 1),
+        decoration: BoxDecoration(
+          color: index < strength ? _getColor() : Colors.grey[300],
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+    );
+  }
+
+  Color _getColor() {
+    switch (strength) {
+      case 0:
+        return Colors.red;
+      case 1:
+        return Colors.orange;
+      case 2:
+      case 3:
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getStrengthText() {
+    switch (strength) {
+      case 0:
+        return 'ضعيفة';
+      case 1:
+        return 'متوسطة';
+      case 2:
+      case 3:
+        return 'قوية';
+      default:
+        return '';
+    }
   }
 }

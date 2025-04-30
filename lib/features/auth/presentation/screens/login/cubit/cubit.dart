@@ -1,10 +1,7 @@
 import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
-import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:dr_fit/features/data_entry/presentation/screens/intro_screen.dart';
 import 'package:dr_fit/core/utils/component.dart';
-import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
-import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';

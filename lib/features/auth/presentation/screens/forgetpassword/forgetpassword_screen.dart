@@ -77,10 +77,25 @@ class ForgetpasswordScreen extends StatelessWidget {
                                     Navigator.pop(context);
                                   });
                                 } catch (e) {
+                                  String errorMessage = "حدث خطأ غير متوقع";
+                                  if (e is FirebaseAuthException) {
+                                    switch (e.code) {
+                                      case 'invalid-email':
+                                        errorMessage =
+                                            "صيغة البريد الإلكتروني غير صحيحة";
+                                        break;
+                                      case 'user-not-found':
+                                        errorMessage =
+                                            "إذا كان البريد الإلكتروني مسجلاً، سيتم إرسال الرابط إليه";
+                                        break; // لا تعرض أن البريد غير موجود لأسباب أمنية
+                                      default:
+                                        errorMessage =
+                                            "خطأ في الإرسال: ${e.message}";
+                                    }
+                                  }
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                          "حدث خطأ أثناء إرسال رابط إعادة التعيين: $e"),
+                                      content: Text(errorMessage),
                                       backgroundColor: Colors.red,
                                     ),
                                   );
