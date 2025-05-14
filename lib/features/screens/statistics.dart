@@ -1,6 +1,8 @@
 import 'dart:math'; // Add this import for pow function
 
 import 'package:dr_fit/core/network/local/cache_helper.dart';
+import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/features/exercises/presentation/screens/exercises_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dr_fit/features/exercises/controller/exercise_cubit.dart';
@@ -564,39 +566,44 @@ void initState() {
   }
 
   Widget _buildExerciseItem(Exercise exercise) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(12),
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: exercise.gifUrl.isNotEmpty
-              ? Image.network(
-                  exercise.gifUrl,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
-                )
-              : _buildPlaceholderImage(),
+    return InkWell(
+      onTap:() {
+        navigateTo(context, ExercisesInfo(exercises: exercise));
+      } ,
+      child: Card(
+        margin: EdgeInsets.only(bottom: 12),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        title: Text(
-          exercise.name,
-          style: TextStyle(fontWeight: FontWeight.bold),
+        child: ListTile(
+          contentPadding: EdgeInsets.all(12),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: exercise.gifUrl.isNotEmpty
+                ? Image.network(
+                    exercise.gifUrl,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _buildPlaceholderImage(),
+                  )
+                : _buildPlaceholderImage(),
+          ),
+          title: Text(
+            exercise.name,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 4),
+              Text('العضلة: ${exercise.target}'),
+              Text('الأدوات: ${exercise.equipment}'),
+            ],
+          ),
+          trailing: Icon(Icons.chevron_left),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 4),
-            Text('العضلة: ${exercise.target}'),
-            Text('الأدوات: ${exercise.equipment}'),
-          ],
-        ),
-        trailing: Icon(Icons.chevron_left),
       ),
     );
   }

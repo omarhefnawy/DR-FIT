@@ -17,6 +17,7 @@ class AddPostScreen extends StatefulWidget {
   final String userName;
 
   const AddPostScreen({required this.userName});
+
   @override
   _AddPostScreenState createState() => _AddPostScreenState();
 }
@@ -25,63 +26,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   final TextEditingController _postController = TextEditingController();
   File? _selectedImage;
   bool _isLoading = false;
-  String? _imageUrl;
   bool _postUploaded = false;
-
-  // قائمة الكلمات المحظورة
-  final List<String> _badWords = [
-    'حقير',
-    'قذر',
-    'غبي',
-    'أحمق',
-    'مجنون',
-    'نذل',
-    'غبي',
-    'خنزير',
-    'حمار',
-    'مجنونة',
-    'خسيس',
-    'خاين',
-    'كريه',
-    'مغفل',
-    'بطيء',
-    'تافه',
-    'خاسر',
-    'سافل',
-    'مريض نفسي',
-    'عبيط',
-    'معتوه',
-    'وسخ',
-    'مجرم',
-    'شاذ',
-    'فاشل',
-    'حيوان',
-    'عديم الفائدة',
-    'مقرف',
-    'محتال',
-    'ضعيف الشخصية',
-    'مريض عقلي',
-    'دنيء',
-    'غشاش',
-    'وطيء',
-    'خائنة',
-    'متخلف عقلياً',
-  ];
-
-  bool _containsBadWords(String text) {
-    final normalizedText = _normalizeText(text);
-    return _badWords.any((word) {
-      final normalizedWord = _normalizeText(word);
-      return normalizedText.contains(normalizedWord);
-    });
-  }
-
-  String _normalizeText(String text) {
-    return text
-        .replaceAll(RegExp(r'[\u064B-\u065F\u0670]'), '')
-        .replaceAll(RegExp(r'[^\w\s\u0600-\u06FF]'), '')
-        .toLowerCase();
-  }
 
   Future<void> _pickImage() async {
     final File? image = await ImageServices.pickImage();
@@ -94,72 +39,110 @@ class _AddPostScreenState extends State<AddPostScreen> {
   }
 
   Future<void> _uploadPost() async {
-    final trimmedText = _postController.text.trim();
-    final bool noText = trimmedText.isEmpty;
-    final bool noImage = _selectedImage == null;
-
-    if (noText && noImage) {
-      showToast(
-        text: 'يرجى إدخال نص أو اختيار صورة!',
-        state: ToastStates.WARNING,
-      );
-      return;
-    }
-
-    if (trimmedText.isNotEmpty && _containsBadWords(trimmedText)) {
-      showToast(
-        text: 'يحتوي النص على كلمات غير لائقة! يرجى مراجعة المحتوى.',
-        state: ToastStates.ERROR,
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      String? finalImageUrl;
-      if (_selectedImage != null) {
-        finalImageUrl = await ImageServices.uploadImage(_selectedImage!);
-      }
-
-      final String postId =
-          FirebaseFirestore.instance.collection('posts').doc().id;
-      final String uid = FirebaseAuth.instance.currentUser!.uid;
-
-      PostModel newPost = PostModel(
-        userName: widget.userName,
-        postId: postId,
-        uid: uid,
-        post: trimmedText,
-        image: finalImageUrl,
-        date: Timestamp.now(),
-        likes: [],
-      );
-
-      await context.read<PostsCubit>().addPost(post: newPost);
-      showToast(text: 'تم نشر البوست بنجاح!', state: ToastStates.SUCCESS);
-
-      // مسح المسودة بعد النشر بنجاح
-      _postUploaded = true;
-      await _clearDraft();
-      Navigator.pop(context);
-    } catch (e) {
-      showToast(text: 'حدث خطأ أثناء نشر البوست!', state: ToastStates.ERROR);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+  final trimmedText = _postController.text.trim();
+  
+  // 1. التحقق من الإدخال بشكل أكثر دقة
+  if (trimmedText.isEmpty && _selectedImage == null) {
+    showToast(
+      text: 'الرجاء إدخال نص أو صورة للمشاركة',
+      state: ToastStates.WARNING,
+    );
+    return;
   }
 
+  // 2. التحقق من المحتوى النصي
+  try {
+    if (trimmedText.isNotEmpty) {
+      final isValid = await context.read<PostsCubit>().checkContent(trimmedText);
+      if (!isValid) {
+        showToast(
+          text: 'المحتوى يحتوي على كلمات غير لائقة',
+          state: ToastStates.ERROR,
+        );
+        return;
+      }
+    }
+  } catch (e) {
+    showToast(
+      text: 'فشل التحقق من المحتوى، الرجاء المحاولة لاحقاً',
+      state: ToastStates.ERROR,
+    );
+    return;
+  }
+
+  // 3. التحقق من حالة الـ widget قبل التحديثات
+  if (!mounted) return;
+
+  setState(() => _isLoading = true);
+
+  try {
+    String? imageUrl;
+    
+    // 4. تحميل الصورة مع معالجة الأخطاء التفصيلية
+    if (_selectedImage != null) {
+      try {
+        imageUrl = await ImageServices.uploadImage(_selectedImage!)
+            .timeout(const Duration(seconds: 30));
+      } on TimeoutException {
+        showToast(
+          text: 'تم تجاوز وقت تحميل الصورة',
+          state: ToastStates.ERROR,
+        );
+        return;
+      } catch (e) {
+        showToast(
+          text: 'فشل تحميل الصورة: ${e.toString()}',
+          state: ToastStates.ERROR,
+        );
+        return;
+      }
+    }
+
+    // 5. إنشاء نموذج المنشور
+    final newPost = PostModel(
+      postId: FirebaseFirestore.instance.collection('posts').doc().id,
+      uid: FirebaseAuth.instance.currentUser!.uid,
+      userName: widget.userName,
+      post: trimmedText,
+      image: imageUrl,
+      date: Timestamp.now(),
+      likes: [],
+    );
+
+    // 6. إضافة المنشور مع التحقق من السياق
+    if (!mounted) return;
+    await context.read<PostsCubit>().addPost(post: newPost);
+
+    // 7. إدارة المسودة بعد النجاح
+    _postUploaded = true;
+    await _clearDraft();
+    
+    // 8. إغلاق الشاشة مع التحديث
+    if (mounted) {
+      Navigator.of(context).pop(true); // إرجاع نجاح العملية
+    }
+
+    showToast(text: 'تم النشر بنجاح!', state: ToastStates.SUCCESS);
+
+  } catch (e) {
+    showToast(
+      text: 'خطأ غير متوقع: ${e.toString()}',
+      state: ToastStates.ERROR,
+    );
+  } finally {
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+}
+  
+  
   @override
-  void initState() {
-    super.initState();
-    _loadDraftData();
+  void dispose() {
+    if (!_postUploaded) {
+      CacheHelper.setData(key: 'draftText', value: _postController.text);
+    }
+    super.dispose();
   }
 
   Future<void> _loadDraftData() async {
@@ -181,6 +164,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
   Future<void> _clearDraft() async {
     await CacheHelper.removeData(key: 'draftText');
     await CacheHelper.removeData(key: 'draftImage');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDraftData();
   }
 
   @override
@@ -260,7 +249,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               color: Colors.black12,
                               blurRadius: 6,
                               offset: Offset(0, 2),
-                            ),
+                            )
                           ],
                         ),
                         child: ClipRRect(
@@ -370,14 +359,5 @@ class _AddPostScreenState extends State<AddPostScreen> {
       }),
     );
     return completer.future;
-  }
-
-  @override
-  @override
-  void dispose() {
-    super.dispose();
-    if (!_postUploaded) {
-      CacheHelper.setData(key: 'draftText', value: _postController.text);
-    }
   }
 }

@@ -1,9 +1,8 @@
 import 'dart:async';
-
+import 'dart:ui' as ui;
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/component.dart';
-import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
 import 'package:dr_fit/features/posts/cubit/posts_state.dart';
@@ -14,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   final PostModel post;
   final String name;
   final bool isOwner;
@@ -28,6 +27,14 @@ class PostCard extends StatelessWidget {
     required this.userId,
   });
 
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   Stream<int> getCommentCount(String postId) {
     return FirebaseFirestore.instance
         .collection('posts')
@@ -39,194 +46,62 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool my = FirebaseAuth.instance.currentUser?.uid == post.uid;
+    super.build(context);
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final isMyPost = currentUserId == widget.post.uid;
 
     return BlocBuilder<PostsCubit, PostsStates>(
+      buildWhen: (prev, curr) => curr is PostsLoadedState,
       builder: (context, state) {
-        bool isLiked = post.likes.contains(userId);
+        final currentPost = context.read<PostsCubit>().posts.firstWhere(
+              (p) => p.postId == widget.post.postId,
+              orElse: () => widget.post,
+            );
 
-        return InkWell(
-          onLongPress: () {
-            if (my) {
-              AwesomeDialog(
-                context: context,
-                dialogType: DialogType.question,
-                title: 'خيارات المنشور',
-                desc: 'ماذا تريد أن تفعل؟',
-                btnOkText: 'حذف',
-                btnOkColor: Colors.red,
-                btnOkOnPress: () {
-                  context.read<PostsCubit>().deletePost(postId: post.postId);
-                },
-                btnCancelText: 'تعديل',
-                btnCancelColor: Colors.blue,
-                btnCancelOnPress: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditPostScreen(
-                        postId: post.postId,
-                        value: post.post,
-                        imageUrl: post.image ?? '',
-                      ),
-                    ),
-                  );
-                },
-              ).show();
-            }
-          },
-          child: Card(
-            elevation: my ? 8 : 3,
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            shape: RoundedRectangleBorder(
+        final isLiked = currentPost.likes.contains(currentUserId);
+
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            child: InkWell(
+              onLongPress: isMyPost ? _showPostOptions : null,
               borderRadius: BorderRadius.circular(20),
-              side: my
-                  ? const BorderSide(color: Colors.blueAccent, width: 2)
-                  : BorderSide.none,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        my ? "$name ⭐" : post.userName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: my ? Colors.blueAccent : bottomNavigationBar,
-                        ),
+              splashColor: Colors.blue.withOpacity(0.1),
+              highlightColor: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildPostHeader(currentPost, isMyPost),
+                    const SizedBox(height: 12),
+                    if (currentPost.post.trim().isNotEmpty)
+                      _ExpandableTextEnhanced(
+                        text: currentPost.post,
+                        trimLength: 120,
                       ),
-                      Text(
-                        DateFormat('dd/MM/yyyy HH:mm')
-                            .format(post.date.toDate()),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                    if (currentPost.image?.isNotEmpty ?? false)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: _buildPostImage(currentPost),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  if (post.post.trim().isNotEmpty)
-                    _ExpandableTextAnimated(
-                      text: post.post,
-                      trimLength: 120,
-                    ),
-                  const SizedBox(height: 5),
-                  if ((post.image ?? '').isNotEmpty)
-                    GestureDetector(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => Dialog(
-                            backgroundColor: Colors.black,
-                            insetPadding: EdgeInsets.all(10),
-                            child: InteractiveViewer(
-                              panEnabled: true,
-                              minScale: 0.5,
-                              maxScale: 3.0,
-                              child: Image.network(
-                                post.image!,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: _buildNetworkImageWithOriginalAspectRatio(),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          context
-                              .read<PostsCubit>()
-                              .toggleLikes(postId: post.postId, uid: userId);
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: isLiked ? Colors.red : Colors.grey,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          backgroundColor:
-                              isLiked ? Colors.red[50] : Colors.grey[100],
-                        ),
-                        icon: Icon(
-                          isLiked ? Icons.favorite : Icons.favorite_border,
-                          size: 20,
-                        ),
-                        label: Text(
-                          '${post.likes.length}',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                        ),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          navigateTo(
-                            context,
-                            AddCommentScreen(
-                              userName: name,
-                              postId: post.postId,
-                            ),
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.blue,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          backgroundColor: Colors.blue[50],
-                        ),
-                        icon: const Icon(Icons.comment, size: 20),
-                        label: StreamBuilder<int>(
-                          stream: getCommentCount(post.postId),
-                          builder: (context, snapshot) {
-                            final count = snapshot.data ?? 0;
-                            return Text(
-                              '$count',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    _buildInteractionButtons(currentPost, isLiked),
+                  ],
+                ),
               ),
             ),
           ),
@@ -235,136 +110,349 @@ class PostCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNetworkImageWithOriginalAspectRatio() {
-    return FutureBuilder<Size>(
-      future: _getImageSize(post.image!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData) {
-          final size = snapshot.data!;
-          return AspectRatio(
-            aspectRatio: size.width / size.height,
-            child: Image.network(
-              post.image!,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
+  Widget _buildPostHeader(PostModel post, bool isMyPost) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Flexible(
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isMyPost ? Colors.blue[50] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  isMyPost ? "${widget.name} ⭐" : post.userName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isMyPost ? Colors.blue[800] : Colors.grey[800],
                   ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[200],
-                child: Icon(Icons.error, color: Colors.red),
+                ),
               ),
-            ),
-          );
-        } else {
-          return Container(
-            height: 200,
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
+            ],
+          ),
+        ),
+        Text(
+          DateFormat('dd/MM/yyyy • HH:mm').format(post.date.toDate()),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[500],
+            fontFeatures: const [ui.FontFeature.tabularFigures()],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPostImage(PostModel post) {
+    return Hero(
+      tag: post.image!,
+      child: GestureDetector(
+        onTap: () => _showFullImage(post.image!),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _buildUniformImage(post.image!),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractionButtons(PostModel post, bool isLiked) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildInteractionButton(
+          icon: isLiked ? Icons.favorite : Icons.favorite_border,
+          label: '${post.likes.length}',
+          color: isLiked ? Colors.red : Colors.grey,
+          onPressed: () => _handleLike(post),
+        ),
+        _buildCommentButton(post),
+      ],
+    );
+  }
+
+  Widget _buildCommentButton(PostModel post) {
+    return StreamBuilder<int>(
+      stream: getCommentCount(post.postId),
+      builder: (context, snapshot) {
+        final count = snapshot.data ?? 0;
+        return _buildInteractionButton(
+          icon: Icons.comment,
+          label: count > 0 ? '$count تعليق' : 'تعليق',
+          color: Colors.blue,
+          onPressed: () => _navigateToComments(post),
+        );
       },
     );
   }
 
-  Future<Size> _getImageSize(String imageUrl) async {
-    final Completer<Size> completer = Completer<Size>();
-    final Image image = Image.network(imageUrl);
-    image.image.resolve(ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool _) {
-        completer.complete(Size(
-          info.image.width.toDouble(),
-          info.image.height.toDouble(),
-        ));
-      }),
-    );
-    return completer.future;
-  }
-}
-
-class _ExpandableTextAnimated extends StatefulWidget {
-  final String text;
-  final int trimLength;
-  final int expandThreshold;
-
-  const _ExpandableTextAnimated({
-    Key? key,
-    required this.text,
-    this.trimLength = 150,
-    this.expandThreshold = 300,
-  }) : super(key: key);
-
-  @override
-  State<_ExpandableTextAnimated> createState() =>
-      _ExpandableTextAnimatedState();
-}
-
-class _ExpandableTextAnimatedState extends State<_ExpandableTextAnimated>
-    with SingleTickerProviderStateMixin {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final int textLength = widget.text.length;
-    final bool isTrimmed = textLength > widget.trimLength;
-    final bool canCollapse = textLength > widget.expandThreshold;
-
-    final String displayText = _expanded || !isTrimmed
-        ? widget.text
-        : widget.text.substring(0, widget.trimLength).trim() + '...';
-
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            textAlign: TextAlign.start,
-            text: TextSpan(
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-              children: [
-                TextSpan(text: displayText),
-                if (isTrimmed && !_expanded)
-                  WidgetSpan(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() => _expanded = !_expanded);
-                      },
-                      child: Text(
-                        ' إظهار المزيد',
-                        style: const TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          if (_expanded && canCollapse)
-            GestureDetector(
-              onTap: () {
-                setState(() => _expanded = !_expanded);
-              },
-              child: Text(
-                'إخفاء',
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-        ],
+  Widget _buildInteractionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        foregroundColor: color,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      icon: Icon(icon, size: 20),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: color,
+        ),
       ),
     );
   }
+
+  Widget _buildUniformImage(String imageUrl) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: progress.expectedTotalBytes != null
+                  ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                  : null,
+              strokeWidth: 2,
+              color: Colors.blue[200],
+            ),
+          );
+        },
+        errorBuilder: (context, _, __) => _buildImageErrorPlaceholder(),
+      ),
+    );
+  }
+
+  void _showFullImage(String imageUrl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FullScreenImageScreen(imageUrl: imageUrl),
+      ),
+    );
+  }
+
+  void _showPostOptions() {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.question,
+      title: 'خيارات المنشور',
+      desc: 'ماذا تريد أن تفعل؟',
+      btnOkText: 'حذف',
+      btnOkColor: Colors.red,
+      btnOkOnPress: () => _deletePost(),
+      btnCancelText: 'تعديل',
+      btnCancelColor: Colors.blue,
+      btnCancelOnPress: () => _editPost(),
+    ).show();
+  }
+
+  void _deletePost() {
+    context.read<PostsCubit>().deletePost(postId: widget.post.postId);
+  }
+
+  void _editPost() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPostScreen(
+          postId: widget.post.postId,
+          value: widget.post.post,
+          imageUrl: widget.post.image ?? '',
+        ),
+      ),
+    );
+  }
+
+  void _handleLike(PostModel post) {
+    context.read<PostsCubit>().toggleLikes(
+          postId: post.postId,
+          uid: FirebaseAuth.instance.currentUser!.uid,
+        );
+  }
+
+  void _navigateToComments(PostModel post) {
+    navigateTo(
+      context,
+      AddCommentScreen(
+        userName: widget.name,
+        postId: post.postId,
+      ),
+    );
+  }
+}
+
+class FullScreenImageScreen extends StatelessWidget {
+  final String imageUrl;
+
+  const FullScreenImageScreen({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            InteractiveViewer(
+              panEnabled: true,
+              minScale: 0.1,
+              maxScale: 4.0,
+              child: Center(
+                child: Hero(
+                  tag: imageUrl,
+                  child: Image.network(imageUrl),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 20,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExpandableTextEnhanced extends StatefulWidget {
+  final String text;
+  final int trimLength;
+
+  const _ExpandableTextEnhanced({
+    Key? key,
+    required this.text,
+    this.trimLength = 150,
+  }) : super(key: key);
+
+  @override
+  State<_ExpandableTextEnhanced> createState() => _ExpandableTextEnhancedState();
+}
+
+class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced> 
+    with SingleTickerProviderStateMixin {
+  bool _expanded = false;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final textLength = widget.text.length;
+    final isTrimmed = textLength > widget.trimLength;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          alignment: Alignment.topLeft,
+          child: Text(
+            widget.text,
+            overflow: TextOverflow.clip,
+            maxLines: _expanded ? null : 3,
+            style: const TextStyle(
+              fontSize: 15,
+              height: 1.5,
+              color: Colors.black87,
+            ),
+          ),
+        ),
+        if (isTrimmed)
+          TextButton(
+            onPressed: _toggleExpansion,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              minimumSize: Size.zero,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _expanded ? 'إظهار أقل' : 'إظهار المزيد',
+                  style: TextStyle(
+                    color: Colors.blue[600],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                AnimatedIcon(
+                  icon: AnimatedIcons.arrow_menu,
+                  progress: _animation,
+                  color: Colors.blue[600],
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  void _toggleExpansion() {
+    setState(() => _expanded = !_expanded);
+    _expanded ? _controller.forward() : _controller.reverse();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+Widget _buildImageErrorPlaceholder() {
+  return Container(
+    color: Colors.grey[100],
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.broken_image_rounded, color: Colors.grey[400], size: 40),
+          const SizedBox(height: 8),
+          Text(
+            'تعذر تحميل الصورة',
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

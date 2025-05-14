@@ -62,6 +62,29 @@ class _EditPostScreenState extends State<EditPostScreen> {
       return;
     }
 
+    // ✅ التحقق من محتوى النص إذا كان موجودًا
+    if (trimmedText.isNotEmpty) {
+      try {
+
+        final isContentValid =
+            await context.read<PostsCubit>().checkContent(trimmedText);
+
+        if (!isContentValid) {
+          showToast(
+            text: 'المحتوى يحتوي على لغة غير لائقة، يرجى التعديل',
+            state: ToastStates.ERROR,
+          );
+          return;
+        }
+      } catch (e) {
+        showToast(
+          text: 'تعذر التحقق من المحتوى، يرجى المحاولة لاحقاً',
+          state: ToastStates.ERROR,
+        );
+        return;
+      }
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -354,7 +377,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     child: _isLoading
                         ? CupertinoActivityIndicator()
                         : Text('تحديث',
-                            style: TextStyle(fontSize: 18, color: Colors.white)),
+                            style:
+                                TextStyle(fontSize: 18, color: Colors.white)),
                   ),
                 ),
               ],

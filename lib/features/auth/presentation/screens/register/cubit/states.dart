@@ -12,3 +12,7 @@ class RegisterFailState extends RegisterStates {
 }
 
 class RegisterChangePasswordVisibilityState extends RegisterStates {}
+class PasswordStrengthChangedState extends RegisterStates {
+  final int strength;
+  PasswordStrengthChangedState(this.strength);
+}

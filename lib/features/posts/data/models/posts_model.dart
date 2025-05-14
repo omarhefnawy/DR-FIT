@@ -52,6 +52,7 @@ class PostModel {
       'likes': likes,
     };
   }
+  
 
   // Create from JSON
   factory PostModel.fromJson(Map<String, dynamic> json) {
