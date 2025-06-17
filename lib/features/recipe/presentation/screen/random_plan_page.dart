@@ -11,6 +11,7 @@ class RandomPlanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       appBar: customAppBar(context),
       body: SingleChildScrollView(
         child: Column(
@@ -57,9 +58,6 @@ class RandomPlanPage extends StatelessWidget {
                         context,
                         recipes: state.recipes,
                         index: index,
-                        title: state.title,
-                        instructions: state.instructions,
-                        ingredients: state.ingredients,
                         isDaily: true,
                       );
                     },

@@ -25,8 +25,6 @@ class RecipeView extends StatelessWidget {
               return _buildRecipeList(
                 context,
                 recipes: state.recipes,
-                instructions: state.instructions,
-                ingredients: state.ingredients,
                 title: state.title,
               );
             }
@@ -71,8 +69,6 @@ class RecipeView extends StatelessWidget {
     BuildContext context, {
     required List<Recipe> recipes,
     required List<String> title,
-    required List<List<String>> instructions,
-    required List<List<String>> ingredients,
   }) {
     return ListView.separated(
       shrinkWrap: true,
@@ -84,9 +80,6 @@ class RecipeView extends StatelessWidget {
           context,
           recipes: recipes,
           index: index,
-          title: title,
-          instructions: instructions,
-          ingredients: ingredients,
         );
       },
     );

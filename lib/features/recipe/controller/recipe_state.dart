@@ -23,3 +23,10 @@ class RecipeError extends RecipeState {
   final String error;
   RecipeError(this.error);
 }
+
+class FavoriteUpdated extends RecipeState {}
+
+class FavoriteError extends RecipeState {
+  final String error;
+  FavoriteError(this.error);
+}

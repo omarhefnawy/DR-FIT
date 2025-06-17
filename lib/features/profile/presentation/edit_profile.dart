@@ -197,7 +197,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: const Text(
                     'حفظ التعديلات',
                     style: TextStyle(
-                      color: kSecondryColor,
+                      color: kSecondaryColor,
                     ),
                   ),
                 ),

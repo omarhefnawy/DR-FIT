@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../../../../core/utils/component.dart';
+
 class ExercisesInfo extends StatelessWidget {
   ExercisesInfo({
     super.key,
@@ -39,26 +41,32 @@ class ExercisesInfo extends StatelessWidget {
               BlocBuilder<FavoriteCubit, FavoriteState>(
                 builder: (context, state) {
                   final user = _auth.currentUser;
-                  if (user == null) return SizedBox(); 
-                  
+                  if (user == null) return SizedBox();
+
                   return StreamBuilder<DocumentSnapshot>(
                     stream: _firestore
                         .collection('favorites')
                         .doc(user.uid)
                         .collection('exercises')
-                        .doc(exercises.id) 
+                        .doc(exercises.id)
                         .snapshots(),
                     builder: (context, snapshot) {
                       final isFavorite = snapshot.data?.exists ?? false;
                       return IconButton(
                         icon: Icon(
-                          isFavorite 
-                            ? Icons.favorite 
-                            : Icons.favorite_border,
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: Colors.red,
                         ),
-                        onPressed: () => context.read<FavoriteCubit>()
-                            .toggleFavorite(exercises), 
+                        onPressed: () {
+                          context
+                              .read<FavoriteCubit>()
+                              .toggleFavorite(exercises);
+                          showToast(
+                              text: isFavorite
+                                  ? 'تمت الإزالة بنجاح'
+                                  : 'تمت الاضافه بنجاح',
+                              state: ToastStates.SUCCESS);
+                        },
                       );
                     },
                   );

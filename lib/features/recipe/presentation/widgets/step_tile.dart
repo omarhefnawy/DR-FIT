@@ -21,14 +21,12 @@ class StepTile extends StatelessWidget {
                 bottom: BorderSide(color: Colors.grey.shade300, width: 1))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          textDirection: TextDirection.rtl,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             (data != null)
                 ? Container(
                     margin: EdgeInsets.only(top: 10),
                     child: Text(
-                      textDirection: TextDirection.rtl,
                       data[index],
                       style: TextStyle(
                         fontSize: 16,

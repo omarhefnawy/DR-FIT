@@ -69,26 +69,47 @@ class _DrFitLayoutState extends State<DrFitLayout> {
     return Scaffold(
       backgroundColor: kPrimaryColor,
       body: screens[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        elevation: 2,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: bottomNavigationBar,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'الرئيسية'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart), label: 'إحصائيات'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'مجتمعنا'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.fastfood_rounded), label: ' التغذية '),
+      bottomNavigationBar: Stack(
+        children: [
+          // Gradient background behind the BottomNavigationBar
+          Container(
+            height: kBottomNavigationBarHeight,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  buttonPrimaryColor,
+                  buttonSecondaryColor
+                ], // Customize your colors
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+
+          // The actual BottomNavigationBar
+          BottomNavigationBar(
+            currentIndex: currentIndex,
+            elevation: 0, // Remove shadow so gradient is clean
+            onTap: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+            },
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent, // Transparent to show gradient
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            items: [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home), label: 'الرئيسية'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart), label: 'إحصائيات'),
+              BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'مجتمعنا'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'حسابي'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.fastfood_rounded), label: 'التغذية'),
+            ],
+          ),
         ],
       ),
     );

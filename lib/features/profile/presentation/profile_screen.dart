@@ -124,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: const Text(
                           'تعديل الملف الشخصي',
                           style: TextStyle(
-                            color: kSecondryColor,
+                            color: kSecondaryColor,
                           ),
                         ),
                       ),
@@ -149,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: const Text(
                             'تسجيل خروج  ',
                             style: TextStyle(
-                              color: kSecondryColor,
+                              color: kSecondaryColor,
                             ),
                           ),
                         ),

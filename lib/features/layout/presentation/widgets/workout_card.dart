@@ -1,4 +1,5 @@
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class WorkoutCard extends StatelessWidget {
@@ -16,29 +17,43 @@ class WorkoutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160,
-      height: 160,
+      width: context.width * .45,
+      height: context.height * .23,
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            buttonPrimaryColor,
+            buttonSecondaryColor,
+          ], // Replace with your gradient colors
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          transform: GradientRotation(1),
+        ),
         color: bottomNavigationBar,
         borderRadius: BorderRadiusDirectional.circular(15),
       ),
       child: Column(
         children: [
-          Container(
-            height: 94.17,
+          SizedBox(
+            height: context.height * .12,
+            width: context.width * .45,
             child: Image(
-              image: AssetImage(imagePath),
+              fit: BoxFit.fill,
+              image: AssetImage(
+                imagePath,
+              ),
             ),
           ),
-          const SizedBox(
-            height: 5,
+          SizedBox(
+            height: context.height * .02,
           ),
           Icon(
             icon,
             color: Colors.white,
           ),
-          const SizedBox(
-            height: 5,
+          SizedBox(
+            height: context.height * .02,
           ),
           Text(
             title,
