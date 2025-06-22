@@ -15,11 +15,11 @@ class RecipeCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       body: BlocBuilder<RecipeCubit, RecipeState>(
         builder: (context, state) {
           if (state is RecipeLoading) {
-            return _buildLoadingIndicator();
+            return _buildLoadingIndicator(context);
           }
           return SingleChildScrollView(
             padding: EdgeInsets.only(
@@ -121,21 +121,21 @@ class RecipeCategory extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingIndicator() {
+  Widget _buildLoadingIndicator(BuildContext context) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           LoadingAnimationWidget.progressiveDots(
-            color: buttonPrimaryColor,
+            color: buttonPrimaryColor(context),
             size: 50,
           ),
           Text(
             textDirection: TextDirection.rtl,
             '     جاري التحميل   ',
             style: TextStyle(
-                color: buttonPrimaryColor,
+                color: buttonPrimaryColor(context),
                 fontSize: 24,
                 fontWeight: FontWeight.bold),
           ),

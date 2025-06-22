@@ -51,7 +51,7 @@ class RegisterScreen extends StatelessWidget {
         builder: (context, state) {
           final cubit = BlocProvider.of<RegisterCubit>(context);
           return Scaffold(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: PrimaryColor(context),
             body: Center(
               child: SingleChildScrollView(
                 child: Padding(
@@ -138,7 +138,7 @@ class RegisterScreen extends StatelessWidget {
                             },
                             text: 'تسجيل',
                             isUpperCase: true,
-                            radius: 20,
+                            radius: 20, context: context,
                           ),
                         ),
                         SizedBox(height: 30),

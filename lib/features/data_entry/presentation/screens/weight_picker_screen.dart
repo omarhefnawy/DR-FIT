@@ -32,11 +32,11 @@ class WeightPickerState extends State<WeightPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor, // Light purple background.
+      backgroundColor: PrimaryColor(context), // Light purple background.
       appBar: AppBar(
         forceMaterialTransparency: true,
         leadingWidth: 200,
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -51,13 +51,13 @@ class WeightPickerState extends State<WeightPickerScreen> {
               children: [
                 Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: buttonPrimaryColor,
+                  color: buttonPrimaryColor(context),
                   size: 20,
                 ),
                 Text(
                   'عودة',
                   style: TextStyle(
-                    color: buttonPrimaryColor,
+                    color: buttonPrimaryColor(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -76,12 +76,12 @@ class WeightPickerState extends State<WeightPickerScreen> {
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: buttonPrimaryColor,
+              color: buttonPrimaryColor(context),
             ),
           ),
           Spacer(),
           Container(
-            color: buttonPrimaryColor,
+            color: buttonPrimaryColor(context),
             child: customSlider(
                 height: context.height * .1875,
                 width: context.width * .3333,
@@ -104,7 +104,7 @@ class WeightPickerState extends State<WeightPickerScreen> {
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: buttonPrimaryColor,
+                  color: buttonPrimaryColor(context),
                 ),
               ),
               SizedBox(
@@ -138,7 +138,7 @@ class WeightPickerState extends State<WeightPickerScreen> {
               },
               text: 'التالي',
               radius: 20,
-              width: context.width * .444,
+              width: context.width * .444, context: context,
             ),
           ),
         ],

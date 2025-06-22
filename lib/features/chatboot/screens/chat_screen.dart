@@ -1,7 +1,7 @@
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:flutter/material.dart';
 import '../service/gemini_service.dart';
-import '../widgets/massefe_tile.dart';
+import '../widgets/massage_tile.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -30,12 +30,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
         title: Text(
           "DR-Fit Bot",
+          style: TextStyle(color: textColor(context)),
         ),
-        backgroundColor: kPrimaryColor,
+        iconTheme: IconThemeData(color: buttonPrimaryColor(context)),
       ),
       body: Column(
         children: [
@@ -47,6 +48,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 return MessageTile(
                   message: msg['message']!,
                   isUser: msg['role'] == 'user',
+                  textColor: textColor(context),
+                  bgColor: secondaryColor(context),
                 );
               },
             ),
@@ -57,9 +60,9 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: TextField(
-                    cursorColor: Colors.black,
+                    cursorColor: textColor(context),
                     style: TextStyle(
-                      color: Colors.black,
+                      color: textColor(context),
                     ),
                     onSubmitted: (value) {
                       final message = _controller.text.trim();
@@ -82,7 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.send,
-                    color: buttonPrimaryColor,
+                    color: buttonPrimaryColor(context),
                   ),
                   onPressed: () {
                     final message = _controller.text.trim();

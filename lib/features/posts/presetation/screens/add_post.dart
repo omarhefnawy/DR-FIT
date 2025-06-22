@@ -177,13 +177,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
     final hasImage = _selectedImage != null;
 
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
-        title: Text('إضافة منشور', style: TextStyle(color: Colors.black)),
+        title: Text('إضافة منشور', style: TextStyle(color: textColor(context))),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: PrimaryColor(context),
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: textColor(context)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -193,7 +193,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: secondaryColor(context),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -207,7 +207,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   controller: _postController,
                   maxLines: 5,
                   textDirection: TextDirection.rtl,
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 20,color: textColor(context)),
                   decoration: InputDecoration(
                     hintText: 'اكتب شيئًا...',
                     border: OutlineInputBorder(
@@ -305,7 +305,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _uploadPost,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: bottomNavigationBar,
+                    backgroundColor: bottomNavBarColor(context),
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),

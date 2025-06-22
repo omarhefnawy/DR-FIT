@@ -73,7 +73,7 @@ class OnboardingBody extends StatelessWidget {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(25.0)),
                                     ),
-                                    color: buttonPrimaryColor,
+                                    color: buttonPrimaryColor(context),
                                     onPressed: () {
                                       cubit.onGetStart(context);
                                     },
@@ -101,7 +101,7 @@ class OnboardingBody extends StatelessWidget {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(25.0)),
                                     ),
-                                    color: buttonPrimaryColor,
+                                    color: buttonPrimaryColor(context),
                                     onPressed: () =>
                                         cubit.toNext(pageController),
                                     elevation: 10,

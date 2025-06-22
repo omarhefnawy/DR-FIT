@@ -46,7 +46,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
       if (scrollController.position.pixels > 4.0) {
         setState(() {
           appBarColor =
-              kPrimaryColor; // Change this to your desired appBar color
+              PrimaryColor(context); // Change this to your desired appBar color
         });
       } else {
         setState(() {
@@ -171,7 +171,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(top: 20, bottom: 30, left: 16, right: 16),
-            color: buttonPrimaryColor,
+            color: buttonPrimaryColor(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -228,7 +228,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
           Container(
             height: 60,
             width: MediaQuery.of(context).size.width,
-            color: kPrimaryColor,
+            color: PrimaryColor(context),
             child: TabBar(
               controller: _tabController,
               onTap: (index) {
@@ -236,12 +236,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                   _tabController?.index = index;
                 });
               },
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.black.withOpacity(0.6),
+              labelColor:  textColor(context),
+              unselectedLabelColor:  textColor(context).withOpacity(0.6),
               labelStyle: TextStyle(
                 fontWeight: FontWeight.w500,
               ),
-              indicatorColor: Colors.black,
+              indicatorColor: textColor(context),
               tabs: [
                 Tab(text: 'طريقة التحضير'),
                 Tab(text: 'المكونات'),

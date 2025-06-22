@@ -11,7 +11,7 @@ class RandomPlanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: customAppBar(context),
       body: SingleChildScrollView(
         child: Column(
@@ -22,7 +22,7 @@ class RandomPlanPage extends StatelessWidget {
             Text(
               'خطة الوجبات العشوائيه',
               style: TextStyle(
-                color: buttonPrimaryColor,
+                color: buttonPrimaryColor(context),
                 fontSize: 28,
               ),
             ),
@@ -39,7 +39,7 @@ class RandomPlanPage extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 'الفطار',
                 style: TextStyle(
-                  color: buttonPrimaryColor.withOpacity(.7),
+                  color: buttonPrimaryColor(context).withOpacity(.7),
                   fontSize: 24,
                 ),
               ),
@@ -52,7 +52,7 @@ class RandomPlanPage extends StatelessWidget {
                     physics: const BouncingScrollPhysics(),
                     itemCount: 3,
                     separatorBuilder: (_, index) =>
-                        separateWidget(index: index),
+                        separateWidget(index: index, context: (context)),
                     itemBuilder: (context, index) {
                       return buildRecipeItem(
                         context,
@@ -75,7 +75,7 @@ class RandomPlanPage extends StatelessWidget {
     );
   }
 
-  Widget separateWidget({required index}) {
+  Widget separateWidget({required index, required BuildContext context}) {
     var titles = [
       'الغداء',
       'العشاء',
@@ -91,7 +91,7 @@ class RandomPlanPage extends StatelessWidget {
             textDirection: TextDirection.rtl,
             titles[index],
             style: TextStyle(
-              color: buttonPrimaryColor.withOpacity(.7),
+              color: buttonPrimaryColor(context).withOpacity(.7),
               fontSize: 24,
             ),
           ),

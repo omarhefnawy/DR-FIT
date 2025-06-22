@@ -35,12 +35,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
         forceMaterialTransparency: true,
         elevation: 0,
         automaticallyImplyLeading: false,
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 20),
@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // صورة البروفايل
                     Center(
                       child: CircleAvatar(
-                        backgroundColor: kPrimaryColor,
+                        backgroundColor: PrimaryColor(context),
                         radius: 60,
                         backgroundImage: profile.img.isNotEmpty
                             ? NetworkImage(profile.img)
@@ -110,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(buttonPrimaryColor),
+                              MaterialStateProperty.all(buttonPrimaryColor(context)),
                         ),
                         onPressed: () {
                           Navigator.push(
@@ -121,10 +121,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         },
-                        child: const Text(
+                        child:  Text(
                           'تعديل الملف الشخصي',
                           style: TextStyle(
-                            color: kSecondaryColor,
+                            color: secondaryColor(context),
                           ),
                         ),
                       ),
@@ -141,15 +141,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor:
-                                MaterialStateProperty.all(buttonPrimaryColor),
+                                MaterialStateProperty.all(buttonPrimaryColor(context)),
                           ),
                           onPressed: () {
                             context.read<LoginCubit>().signOut();
                           },
-                          child: const Text(
+                          child:  Text(
                             'تسجيل خروج  ',
                             style: TextStyle(
-                              color: kSecondaryColor,
+                              color: secondaryColor(context),
                             ),
                           ),
                         ),

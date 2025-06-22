@@ -33,7 +33,7 @@ class IntroScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: context.width * 0.1,
                       fontWeight: FontWeight.bold,
-                      color: buttonPrimaryColor,
+                      color: buttonPrimaryColor(context),
                     ),
                   ),
                 ),
@@ -46,7 +46,7 @@ class IntroScreen extends StatelessWidget {
                     navigateTo(context, WeightPickerScreen());
                   },
                   text: 'التالي',
-                  radius: 50,
+                  radius: 50, context: context,
                 ),
               ),
             ],

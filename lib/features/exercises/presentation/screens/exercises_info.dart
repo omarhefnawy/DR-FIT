@@ -36,7 +36,7 @@ class ExercisesInfo extends StatelessWidget {
         }
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: PrimaryColor(context),
             actions: [
               BlocBuilder<FavoriteCubit, FavoriteState>(
                 builder: (context, state) {
@@ -74,7 +74,7 @@ class ExercisesInfo extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: PrimaryColor(context),
           body: ConditionalBuilder(
             condition: state is TranslateLoading,
             fallback: (context) => ListView(
@@ -149,7 +149,7 @@ class ExercisesInfo extends StatelessWidget {
                         decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: buttonPrimaryColor,
+                              color: buttonPrimaryColor(context),
                               blurStyle: BlurStyle.outer,
                               blurRadius: 5,
                             ),
@@ -202,7 +202,7 @@ class ExercisesInfo extends StatelessWidget {
                           textDirection: TextDirection.rtl,
                           ' ازاي تلعب التمرين؟',
                           style: TextStyle(
-                            color: Colors.black87,
+                            color: textColor(context),
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -240,7 +240,7 @@ class ExercisesInfo extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     '     جاري التحميل..   ',
                     style: TextStyle(
-                        color: buttonPrimaryColor,
+                        color: buttonPrimaryColor(context),
                         fontSize: 24,
                         fontWeight: FontWeight.bold),
                   ),
@@ -248,8 +248,8 @@ class ExercisesInfo extends StatelessWidget {
                     height: context.height * .1,
                   ),
                   LoadingAnimationWidget.flickr(
-                    leftDotColor: buttonPrimaryColor,
-                    rightDotColor: bottomNavigationBar,
+                    leftDotColor: buttonPrimaryColor(context),
+                    rightDotColor: bottomNavBarColor(context),
                     size: 100,
                   ),
                 ],

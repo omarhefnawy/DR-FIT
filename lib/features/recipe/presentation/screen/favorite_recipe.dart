@@ -17,7 +17,7 @@ class FavoriteRecipe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: customAppBar(context),
       body: StreamBuilder<List<Recipe>>(
         stream: context.read<RecipeCubit>().getFavoritesStream(),
@@ -28,9 +28,9 @@ class FavoriteRecipe extends StatelessWidget {
           if (!snapshot.hasData) {
             return Center(
               child: LoadingAnimationWidget.discreteCircle(
-                color: kPrimaryColor,
+                color: PrimaryColor(context),
                 size: 20,
-                secondRingColor: kSecondaryColor,
+                secondRingColor: secondaryColor(context),
               ),
             );
           }

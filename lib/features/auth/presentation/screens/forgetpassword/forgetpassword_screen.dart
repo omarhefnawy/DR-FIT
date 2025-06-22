@@ -21,9 +21,9 @@ class ForgetpasswordScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: kPrimaryColor,
+              backgroundColor: PrimaryColor(context),
             ),
-            backgroundColor: kPrimaryColor,
+            backgroundColor: PrimaryColor(context),
             body: Center(
               child: SingleChildScrollView(
                 child: Padding(
@@ -104,7 +104,7 @@ class ForgetpasswordScreen extends StatelessWidget {
                             },
                             text: 'reset',
                             isUpperCase: true,
-                            radius: 20,
+                            radius: 20, context: context,
                           ),
                         ),
                       ],

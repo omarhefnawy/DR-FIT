@@ -1,5 +1,6 @@
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/core/utils/theme_provider.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/cubit.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/cubit/states.dart';
 import 'package:dr_fit/features/auth/presentation/screens/login/login_screen.dart';
@@ -11,6 +12,7 @@ import 'package:dr_fit/features/profile/controller/profile_states.dart';
 import 'package:dr_fit/features/Favorite/FavoritesScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -19,14 +21,23 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: buttonPrimaryColor(context),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ChatScreen()));
+            context,
+            MaterialPageRoute(builder: (context) => const ChatScreen()),
+          );
         },
-        child: Icon(Icons.auto_awesome),
+        child: Icon(
+          // استخدام icon مخصص للشات
+          Icons.smart_toy_outlined,
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.white // على الوضع النهاري
+              : textColor(context), // على الوضع الليلي
+          size: 30,
+        ),
       ),
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
         forceMaterialTransparency: true,
         elevation: 0,
@@ -36,45 +47,63 @@ class Home extends StatelessWidget {
             if (state is ProfileLoaded) {
               return Text(
                 '${state.profileData.name} ${_getGreetingMessage()}',
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: textColor(context),
+                  fontWeight: FontWeight.bold,
+                ),
               );
             }
             return Text(
-              'أهلا !',
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              'أهلاً !',
+              style: TextStyle(
+                color: textColor(context),
+                fontWeight: FontWeight.bold,
+              ),
             );
           },
         ),
         actions: [
-          Icon(Icons.notifications, color: Colors.black),
+          Icon(Icons.notifications, color: textColor(context)),
           SizedBox(width: 10),
-          Icon(Icons.search, color: Colors.black),
+          Icon(Icons.search, color: textColor(context)),
           IconButton(
-            color: Colors.black,
+            icon: Icon(Icons.logout, color: textColor(context)),
             onPressed: () {
               _showLogoutDialog(context);
             },
-            icon: Icon(Icons.logout),
           ),
-        ],
+         Consumer<ThemeProvider>(
+  builder: (context, themeProvider, _) {
+    return PopupMenuButton<ThemeMode>(
+      icon: Icon(Icons.color_lens),
+      onSelected: (mode) {
+        themeProvider.setThemeMode(mode);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(value: ThemeMode.light, child: Text("Light")),
+        PopupMenuItem(value: ThemeMode.dark, child: Text("Dark")),
+        PopupMenuItem(value: ThemeMode.system, child: Text("System")),
+      ],
+    );
+  },
+),
+ ],
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         clipBehavior: Clip.hardEdge,
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             textDirection: TextDirection.rtl,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                textDirection: TextDirection.rtl,
                 'لقد حان الوقت لكي تخطط جدولك.',
-                style: TextStyle(color: Colors.black54),
+                style: TextStyle(color: textColor(context)),
+                textDirection: TextDirection.rtl,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 decoration: BoxDecoration(
                   boxShadow: [
@@ -87,28 +116,25 @@ class Home extends StatelessWidget {
                   ],
                   gradient: LinearGradient(
                     colors: [
-                      buttonPrimaryColor,
-                      buttonSecondaryColor,
-                    ], // Replace with your gradient colors
+                      buttonPrimaryColor(context),
+                      buttonPrimaryColor(context),
+                    ],
                     begin: Alignment.centerRight,
                     end: Alignment.centerLeft,
-                    transform: GradientRotation(
-                      3,
-                    ),
+                    transform: const GradientRotation(3),
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Colors.transparent, // Make button transparent
+                    backgroundColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'ابدأ تمرين جديد',
                       style: TextStyle(fontSize: 18, color: Colors.white),
@@ -116,7 +142,7 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,7 +151,7 @@ class Home extends StatelessWidget {
                       navigateTo(context, FavoritesScreen());
                     },
                     child: WorkoutCard(
-                      title: 'التمارين المفضله',
+                      title: 'التمارين المفضلة',
                       imagePath: 'assets/images/home2.jpg',
                       icon: Icons.article,
                     ),
@@ -142,7 +168,7 @@ class Home extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -166,14 +192,24 @@ class Home extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('تأكيد تسجيل الخروج'),
-          content: Text('هل أنت متأكد أنك تريد تسجيل الخروج؟'),
+          backgroundColor: PrimaryColor(context),
+          title: Text(
+            'تأكيد تسجيل الخروج',
+            style: TextStyle(color: textColor(context)),
+          ),
+          content: Text(
+            'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+            style: TextStyle(color: textColor(context)),
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('لا', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'لا',
+                style: TextStyle(color: textColor(context)),
+              ),
             ),
             BlocListener<LoginCubit, LoginStates>(
               listener: (context, state) {
@@ -187,7 +223,10 @@ class Home extends StatelessWidget {
                   Navigator.of(context).pop();
                   navigateAndFinish(context, LoginScreen());
                 },
-                child: Text('نعم', style: TextStyle(color: Colors.red)),
+                child: const Text(
+                  'نعم',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
             ),
           ],

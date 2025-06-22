@@ -122,18 +122,18 @@ class _PostsScreenState extends State<PostsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+           Text(
             'جاري التحميل..',
             style: TextStyle(
-              color: buttonPrimaryColor,
+              color: buttonPrimaryColor(context),
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: context.height * 0.1),
           LoadingAnimationWidget.flickr(
-            leftDotColor: buttonPrimaryColor,
-            rightDotColor: bottomNavigationBar,
+            leftDotColor: buttonPrimaryColor(context),
+            rightDotColor: bottomNavBarColor(context),
             size: 100,
           ),
         ],

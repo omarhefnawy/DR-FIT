@@ -33,11 +33,11 @@ class HeightPickerState extends State<HeightPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor, // Light purple background.
+      backgroundColor: PrimaryColor(context), // Light purple background.
       appBar: AppBar(
         forceMaterialTransparency: true,
         leadingWidth: 200,
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -52,13 +52,13 @@ class HeightPickerState extends State<HeightPickerScreen> {
               children: [
                 Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: buttonPrimaryColor,
+                  color: buttonPrimaryColor(context),
                   size: 20,
                 ),
                 Text(
                   'عودة',
                   style: TextStyle(
-                    color: buttonPrimaryColor,
+                    color: buttonPrimaryColor(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -79,7 +79,7 @@ class HeightPickerState extends State<HeightPickerScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: buttonPrimaryColor,
+                color: buttonPrimaryColor(context),
               ),
             ),
 
@@ -92,7 +92,7 @@ class HeightPickerState extends State<HeightPickerScreen> {
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
-                    color: buttonPrimaryColor,
+                    color: buttonPrimaryColor(context),
                   ),
                 ),
                 SizedBox(
@@ -121,7 +121,7 @@ class HeightPickerState extends State<HeightPickerScreen> {
                 borderRadius: BorderRadius.circular(
                   10,
                 ),
-                color: buttonPrimaryColor,
+                color: buttonPrimaryColor(context),
               ),
               width: context.width * .3056,
               height: context.height * .5,
@@ -155,7 +155,7 @@ class HeightPickerState extends State<HeightPickerScreen> {
                 },
                 text: 'التالي',
                 radius: 20,
-                width: context.width * .444,
+                width: context.width * .444, context: context,
               ),
             ),
           ],

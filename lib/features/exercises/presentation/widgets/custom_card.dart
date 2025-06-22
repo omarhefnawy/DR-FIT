@@ -10,7 +10,7 @@ Widget customCard({required Exercise exercise, required context,String? translat
     alignment: Alignment.center,
     margin: EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: buttonPrimaryColor,
+      color: buttonPrimaryColor(context),
       borderRadius: BorderRadius.circular(
         10,
       ),

@@ -1,8 +1,9 @@
-import 'dart:async';
 import 'dart:ui' as ui;
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/posts/data/models/posts_model.dart';
 import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
 import 'package:dr_fit/features/posts/cubit/posts_state.dart';
@@ -48,7 +49,6 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
   Widget build(BuildContext context) {
     super.build(context);
     final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    final isMyPost = currentUserId == widget.post.uid;
 
     return BlocBuilder<PostsCubit, PostsStates>(
       buildWhen: (prev, curr) => curr is PostsLoadedState,
@@ -57,6 +57,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
               (p) => p.postId == widget.post.postId,
               orElse: () => widget.post,
             );
+        final isMyPost = currentUserId == widget.post.uid;
 
         final isLiked = currentPost.likes.contains(currentUserId);
 
@@ -66,7 +67,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: textColor(context).withOpacity(0.1),
                 blurRadius: 10,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),
@@ -75,11 +76,11 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
           ),
           child: Material(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
+            color: secondaryColor(context),
             child: InkWell(
               onLongPress: isMyPost ? _showPostOptions : null,
               borderRadius: BorderRadius.circular(20),
-              splashColor: Colors.blue.withOpacity(0.1),
+              splashColor: buttonPrimaryColor(context).withOpacity(0.1),
               highlightColor: Colors.transparent,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -120,7 +121,9 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isMyPost ? Colors.blue[50] : Colors.grey[100],
+                  color: isMyPost
+                      ? buttonPrimaryColor(context).withOpacity(0.1)
+                      : buttonSecondaryColor(context).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -128,7 +131,9 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: isMyPost ? Colors.blue[800] : Colors.grey[800],
+                    color: isMyPost
+                        ? buttonPrimaryColor(context)
+                        : textColor(context),
                   ),
                 ),
               ),
@@ -139,7 +144,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
           DateFormat('dd/MM/yyyy • HH:mm').format(post.date.toDate()),
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[500],
+            color: textColor(context).withOpacity(0.5),
             fontFeatures: const [ui.FontFeature.tabularFigures()],
           ),
         ),
@@ -167,7 +172,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
         _buildInteractionButton(
           icon: isLiked ? Icons.favorite : Icons.favorite_border,
           label: '${post.likes.length}',
-          color: isLiked ? Colors.red : Colors.grey,
+          color: isLiked ? Colors.red : textColor(context),
           onPressed: () => _handleLike(post),
         ),
         _buildCommentButton(post),
@@ -183,7 +188,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
         return _buildInteractionButton(
           icon: Icons.comment,
           label: count > 0 ? '$count تعليق' : 'تعليق',
-          color: Colors.blue,
+          color: buttonPrimaryColor(context),
           onPressed: () => _navigateToComments(post),
         );
       },
@@ -205,14 +210,10 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
           borderRadius: BorderRadius.circular(20),
         ),
       ),
-      icon: Icon(icon, size: 20),
+      icon: Icon(icon, size: 20, color: color),
       label: Text(
         label,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: color,
-        ),
+        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: color),
       ),
     );
   }
@@ -231,7 +232,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
                   ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
                   : null,
               strokeWidth: 2,
-              color: Colors.blue[200],
+              color: buttonPrimaryColor(context),
             ),
           );
         },
@@ -259,7 +260,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
       btnOkColor: Colors.red,
       btnOkOnPress: () => _deletePost(),
       btnCancelText: 'تعديل',
-      btnCancelColor: Colors.blue,
+      btnCancelColor: buttonPrimaryColor(context),
       btnCancelOnPress: () => _editPost(),
     ).show();
   }
@@ -283,9 +284,9 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin 
 
   void _handleLike(PostModel post) {
     context.read<PostsCubit>().toggleLikes(
-          postId: post.postId,
-          uid: FirebaseAuth.instance.currentUser!.uid,
-        );
+      postId: post.postId,
+      uid: FirebaseAuth.instance.currentUser!.uid,
+    );
   }
 
   void _navigateToComments(PostModel post) {
@@ -307,7 +308,7 @@ class FullScreenImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: PrimaryColor(context),
       body: SafeArea(
         child: Stack(
           children: [
@@ -326,7 +327,7 @@ class FullScreenImageScreen extends StatelessWidget {
               top: 20,
               right: 20,
               child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                icon: Icon(Icons.close, color: textColor(context), size: 30),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -351,23 +352,14 @@ class _ExpandableTextEnhanced extends StatefulWidget {
   State<_ExpandableTextEnhanced> createState() => _ExpandableTextEnhancedState();
 }
 
-class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced> 
-    with SingleTickerProviderStateMixin {
+class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced> with SingleTickerProviderStateMixin {
   bool _expanded = false;
   late AnimationController _controller;
-  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _controller = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
   }
 
   @override
@@ -385,11 +377,7 @@ class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced>
             widget.text,
             overflow: TextOverflow.clip,
             maxLines: _expanded ? null : 3,
-            style: const TextStyle(
-              fontSize: 15,
-              height: 1.5,
-              color: Colors.black87,
-            ),
+            style: TextStyle(fontSize: 15, height: 1.5, color: textColor(context)),
           ),
         ),
         if (isTrimmed)
@@ -397,7 +385,7 @@ class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced>
             onPressed: _toggleExpansion,
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
+              minimumSize: const Size(0, 0),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -405,15 +393,15 @@ class _ExpandableTextEnhancedState extends State<_ExpandableTextEnhanced>
                 Text(
                   _expanded ? 'إظهار أقل' : 'إظهار المزيد',
                   style: TextStyle(
-                    color: Colors.blue[600],
+                    color: buttonPrimaryColor(context),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 AnimatedIcon(
                   icon: AnimatedIcons.arrow_menu,
-                  progress: _animation,
-                  color: Colors.blue[600],
+                  progress: _controller,
+                  color: buttonPrimaryColor(context),
                   size: 20,
                 ),
               ],

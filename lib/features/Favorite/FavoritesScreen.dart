@@ -18,10 +18,10 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var translateCubit = context.read<TranslateCubit>();
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
         title: Text('المفضله'),
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
       ),
       body: StreamBuilder<List<Exercise>>(
         stream: context.read<FavoriteCubit>().getFavoritesStream(),
@@ -32,9 +32,9 @@ class FavoritesScreen extends StatelessWidget {
           if (!snapshot.hasData) {
             return Center(
               child: LoadingAnimationWidget.discreteCircle(
-                color: kPrimaryColor,
+                color: PrimaryColor(context),
                 size: 20,
-                secondRingColor: kSecondaryColor,
+                secondRingColor: secondaryColor(context),
               ),
             );
           }

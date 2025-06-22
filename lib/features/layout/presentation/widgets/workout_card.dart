@@ -23,14 +23,14 @@ class WorkoutCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            buttonPrimaryColor,
-            buttonSecondaryColor,
+            buttonPrimaryColor(context),
+            buttonSecondaryColor(context),
           ], // Replace with your gradient colors
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           transform: GradientRotation(1),
         ),
-        color: bottomNavigationBar,
+        color: bottomNavBarColor(context),
         borderRadius: BorderRadiusDirectional.circular(15),
       ),
       child: Column(

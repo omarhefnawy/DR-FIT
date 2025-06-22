@@ -24,7 +24,7 @@ class CustomProgressBar extends StatelessWidget {
             height: context.height * .01,
             width: context.width * .05,
             decoration: BoxDecoration(
-              color: (page == 0) ? Colors.white : buttonPrimaryColor,
+              color: (page == 0) ? Colors.white : buttonPrimaryColor(context),
               borderRadius: BorderRadius.circular(5.0),
             ),
           ),
@@ -35,7 +35,7 @@ class CustomProgressBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: (page == 1)
                   ? Colors.white
-                  : buttonPrimaryColor, // Background color
+                  : buttonPrimaryColor(context), // Background color
               borderRadius: BorderRadius.circular(5.0),
               //border: Border.all(color: Colors.purple, width: 2.0),
             ),
@@ -47,7 +47,7 @@ class CustomProgressBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: (page == 2)
                   ? Colors.white
-                  : buttonPrimaryColor, // Background color
+                  : buttonPrimaryColor(context), // Background color
               borderRadius: BorderRadius.circular(5.0),
               //border: Border.all(color: Colors.purple, width: 2.0),
             ),
