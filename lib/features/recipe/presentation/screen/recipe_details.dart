@@ -1,23 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/features/recipe/controller/recipe_cubit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dr_fit/features/recipe/model/recipe_model.dart';
 import 'package:dr_fit/features/recipe/presentation/widgets/ingridient_tile.dart';
 import 'package:dr_fit/features/recipe/presentation/widgets/step_tile.dart';
 import 'package:dr_fit/features/recipe/presentation/screen/full_screen_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/utils/component.dart';
 
 class RecipeDetailPage extends StatefulWidget {
   final Recipe data;
-  final String title;
-  final List<String> instructions;
-  final List<String> ingredients;
 
   const RecipeDetailPage({
     super.key,
     required this.data,
-    required this.title,
-    required this.instructions,
-    required this.ingredients,
   });
 
   @override
@@ -67,6 +67,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
     super.dispose();
   }
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,9 +85,46 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
+                context.read<RecipeCubit>().fetchHealthyRecipes();
                 Navigator.of(context).pop();
               },
             ),
+            actions: [
+              BlocBuilder<RecipeCubit, RecipeState>(
+                builder: (context, state) {
+                  final user = _auth.currentUser;
+                  if (user == null) return SizedBox();
+
+                  return StreamBuilder<DocumentSnapshot>(
+                    stream: _firestore
+                        .collection('favoritesRecipes') // ✅ بدل 'favorites'
+                        .doc(user.uid)
+                        .collection('recipe') // ✅ بدل 'exercises'
+                        .doc(widget.data.id.toString())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      final isFavorite = snapshot.data?.exists ?? false;
+                      return IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          context
+                              .read<RecipeCubit>()
+                              .toggleFavorite(widget.data);
+                          showToast(
+                              text: isFavorite
+                                  ? 'تمت الإزالة بنجاح'
+                                  : 'تمت الاضافه بنجاح',
+                              state: ToastStates.SUCCESS);
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
             systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
         ),
@@ -216,7 +255,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
             children: [
               // Tutorial (Steps) List
               StepTile(
-                data: widget.instructions,
+                data: widget.data.instructions,
               ),
               // Ingredients List
               ListView.builder(
@@ -226,7 +265,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return IngridientTile(
-                    data: widget.ingredients[index],
+                    data: widget.data.ingredients[index],
                   );
                 },
               ),

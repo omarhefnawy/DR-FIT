@@ -28,10 +28,11 @@ class PostsCubit extends Cubit<PostsStates> {
   List<CommentModel> comments = [];
 
   PostsCubit({required this.commentRepoImp, required this.postsRepoImp})
-      : super(PostsInitialState()){_init();
-      }
+      : super(PostsInitialState()) {
+    _init();
+  }
 
-        void _init() {
+  void _init() {
     _postsSubscription = postsRepoImp.getPostsStream().listen((newPosts) {
       posts = newPosts;
       emit(PostsLoadedState(posts: List.from(posts)));
@@ -183,35 +184,35 @@ class PostsCubit extends Cubit<PostsStates> {
   }
 
   // ✅ تحديث عدد اللايكات بدون تحميل البيانات
-Future<void> toggleLikes({required String postId, required String uid}) async {
-  try {
-    // إنشاء نسخة جديدة من القائمة مع التحديث
-    final newPosts = posts.map((post) {
-      if (post.postId == postId) {
-        final newLikes = List<String>.from(post.likes);
-        if (newLikes.contains(uid)) {
-          newLikes.remove(uid);
-        } else {
-          newLikes.add(uid);
+  Future<void> toggleLikes(
+      {required String postId, required String uid}) async {
+    try {
+      // إنشاء نسخة جديدة من القائمة مع التحديث
+      final newPosts = posts.map((post) {
+        if (post.postId == postId) {
+          final newLikes = List<String>.from(post.likes);
+          if (newLikes.contains(uid)) {
+            newLikes.remove(uid);
+          } else {
+            newLikes.add(uid);
+          }
+          return post.copyWith(likes: newLikes); // تحديث النسخة
         }
-        return post.copyWith(likes: newLikes); // تحديث النسخة
-      }
-      return post;
-    }).toList();
+        return post;
+      }).toList();
 
-    // تحديث الحالة فوراً
-    emit(PostsLoadedState(posts: newPosts));
+      // تحديث الحالة فوراً
+      emit(PostsLoadedState(posts: newPosts));
 
-    // تحديث Firestore (الخلفية)
-    unawaited(postsRepoImp.toggleLikes(uid: uid, postId: postId));
-
-  } catch (e) {
-    print('Error in toggleLikes: $e');
-    // التراجع عن التغييرات في حالة الخطأ
-    emit(PostsLoadedState(posts: posts));
-    showToast(text: 'حدث خطأ في تحديث الإعجاب', state: ToastStates.ERROR);
+      // تحديث Firestore (الخلفية)
+      unawaited(postsRepoImp.toggleLikes(uid: uid, postId: postId));
+    } catch (e) {
+      print('Error in toggleLikes: $e');
+      // التراجع عن التغييرات في حالة الخطأ
+      emit(PostsLoadedState(posts: posts));
+      showToast(text: 'حدث خطأ في تحديث الإعجاب', state: ToastStates.ERROR);
+    }
   }
-}
 
   Future<void> fetchPostById({required String postId}) async {
     try {
@@ -317,7 +318,7 @@ Future<void> toggleLikes({required String postId, required String uid}) async {
 
     _isAnalyzing = true;
     const apiUrl =
-        'https://api-inference.huggingface.co/models/CAMeL-Lab/bert-base-arabic-camelbert-mix-sentiment';
+        'https://huggingface.co/CAMeL-Lab/bert-base-arabic-camelbert-da-sentiment';
 
     try {
       final response = await _dio.post(

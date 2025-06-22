@@ -75,19 +75,44 @@ class Home extends StatelessWidget {
                 style: TextStyle(color: Colors.black54),
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: bottomNavigationBar,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 7,
+                      spreadRadius: 2,
+                      blurStyle: BlurStyle.normal,
+                    ),
+                  ],
+                  gradient: LinearGradient(
+                    colors: [
+                      buttonPrimaryColor,
+                      buttonSecondaryColor,
+                    ], // Replace with your gradient colors
+                    begin: Alignment.centerRight,
+                    end: Alignment.centerLeft,
+                    transform: GradientRotation(
+                      3,
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Center(
-                  child: Text(
-                    'ابدأ تمرين جديد',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Colors.transparent, // Make button transparent
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'ابدأ تمرين جديد',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
@@ -100,8 +125,8 @@ class Home extends StatelessWidget {
                       navigateTo(context, FavoritesScreen());
                     },
                     child: WorkoutCard(
-                      title: 'روتينك الخاص',
-                      imagePath: 'assets/images/home1.png',
+                      title: 'التمارين المفضله',
+                      imagePath: 'assets/images/home2.jpg',
                       icon: Icons.article,
                     ),
                   ),
@@ -128,11 +153,11 @@ class Home extends StatelessWidget {
   String _getGreetingMessage() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'صباح الخير!';
+      return 'صباح الخير';
     } else if (hour < 18) {
-      return 'مساء الخير!';
+      return 'مساء الخير';
     } else {
-      return 'مساء الخير!';
+      return 'مساء الخير';
     }
   }
 

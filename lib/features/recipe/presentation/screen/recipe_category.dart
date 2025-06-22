@@ -1,6 +1,8 @@
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/features/recipe/controller/recipe_cubit.dart';
+import 'package:dr_fit/features/recipe/presentation/screen/favorite_recipe.dart';
 import 'package:dr_fit/features/recipe/presentation/screen/random_plan_page.dart';
 import 'package:dr_fit/features/recipe/presentation/screen/recipe_view.dart';
 import 'package:flutter/material.dart';
@@ -19,71 +21,100 @@ class RecipeCategory extends StatelessWidget {
           if (state is RecipeLoading) {
             return _buildLoadingIndicator();
           }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () {
-                  navigateTo(context, RandomPlanPage());
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(20),
-                  clipBehavior: Clip.hardEdge,
-                  width: double.infinity,
-                  height: 190,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        'https://www.heilpraxisnet.de/wp-content/uploads/2020/08/Fruehstueck-Abnehmen-1140x570.jpeg',
+          return SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: 50,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    navigateTo(context, RecipeView());
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(20),
+                    clipBehavior: Clip.hardEdge,
+                    width: double.infinity,
+                    height: context.height * .25,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/recipe2.png'),
+                        fit: BoxFit.cover,
+                        opacity: .8,
                       ),
-                      fit: BoxFit.cover,
-                      opacity: .6,
                     ),
-                  ),
-                  child: Text(
-                    'خطة يومية عشوائية',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: buttonPrimaryColor,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      'عرض كل الوصفات',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () {
-                  navigateTo(context, RecipeView());
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.all(20),
-                  clipBehavior: Clip.hardEdge,
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        'https://img.freepik.com/premium-photo/chicken-meal-photography_841014-8527.jpg',
+                InkWell(
+                  onTap: () {
+                    navigateTo(context, RandomPlanPage());
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(20),
+                    clipBehavior: Clip.hardEdge,
+                    width: double.infinity,
+                    height: context.height * .25,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/recipe1.png'),
+                        fit: BoxFit.cover,
+                        opacity: .8,
                       ),
-                      fit: BoxFit.cover,
-                      opacity: .6,
                     ),
-                  ),
-                  child: Text(
-                    'عرض كل الوصفات',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: buttonPrimaryColor,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      'خطة يومية عشوائية',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                InkWell(
+                  onTap: () {
+                    navigateTo(context, FavoriteRecipe());
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(20),
+                    clipBehavior: Clip.hardEdge,
+                    width: double.infinity,
+                    height: context.height * .25,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/recipe3.png'),
+                        fit: BoxFit.cover,
+                        opacity: .8,
+                      ),
+                    ),
+                    child: Text(
+                      'الوجبات المفضله',
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

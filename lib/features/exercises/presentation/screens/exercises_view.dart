@@ -55,7 +55,7 @@ class ExercisesView extends StatelessWidget {
               : LoadingAnimationWidget.discreteCircle(
                   color: kPrimaryColor,
                   size: 20,
-                  secondRingColor: kSecondryColor,
+                  secondRingColor: kSecondaryColor,
                 ),
         );
       },

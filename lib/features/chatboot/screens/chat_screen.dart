@@ -30,7 +30,13 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("DR-Fit Bot")),
+      backgroundColor: kPrimaryColor,
+      appBar: AppBar(
+        title: Text(
+          "DR-Fit Bot",
+        ),
+        backgroundColor: kPrimaryColor,
+      ),
       body: Column(
         children: [
           Expanded(

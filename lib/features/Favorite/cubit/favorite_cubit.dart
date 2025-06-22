@@ -11,7 +11,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   FavoriteCubit() : super(FavoriteInitial()) {
-    _loadFavorites();
+    _loadFavorites(); // (اختياري) إذا أردت تحميل المفضلات مباشرة
   }
 
   Future<void> toggleFavorite(Exercise exercise) async {
@@ -25,10 +25,12 @@ class FavoriteCubit extends Cubit<FavoriteState> {
           .collection('exercises')
           .doc(exercise.id);
 
-      if (await docRef.get().then((doc) => doc.exists)) {
+      final docExists = await docRef.get().then((doc) => doc.exists);
+
+      if (docExists) {
         await docRef.delete(); // إزالة من المفضلة
       } else {
-        await docRef.set(exercise.toMap()); // إضافة إلى المفضلة
+        await docRef.set(exercise.toMap()); // ✅ يتم حفظ كل المعلومات الآن
       }
 
       emit(FavoriteUpdated());
@@ -46,12 +48,11 @@ class FavoriteCubit extends Cubit<FavoriteState> {
         .doc(userId)
         .collection('exercises')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Exercise.fromMap(doc.data()))
-            .toList());
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Exercise.fromMap(doc.data())).toList());
   }
 
   Future<void> _loadFavorites() async {
-    // ... (يمكنك استخدام الـ Stream بدلاً من التحميل مرة واحدة)
+    // ملاحظة: يُفضّل استخدام الـ Stream بدلاً من هذا لتحميل مباشر وتلقائي
   }
 }
