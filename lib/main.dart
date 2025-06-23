@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:dr_fit/bloc_observer.dart';
 import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/core/utils/app_theme.dart';
@@ -15,14 +16,20 @@ import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/recipe/controller/recipe_cubit.dart';
 import 'package:dr_fit/core/utils/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
+import 'core/notification/local/local_notification.dart';
+
 Future<void> main() async {
   await dotenv.load(fileName: "keys.env");
+  //notification
+  await LocalNotificationService.init();
+
   Bloc.observer = MyBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -53,8 +60,11 @@ Future<void> main() async {
                   ..fetchAllPosts(),
           ),
         ],
-        child: const MyApp(),
-      ),
+     child:DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => MyApp(), // Wrap your app
+    ),
+  ),
     ),
   );
 }

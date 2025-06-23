@@ -12,7 +12,7 @@ const Color kLightTextColor = Colors.black;
 const Color kDarkPrimary = Color(0xFF121212);
 const Color kDarkSecondary = Color(0xFF1E1E1E);
 const Color kDarkButtonPrimary = Color(0xFFBB86FC);
-const Color kDarkButtonSecondary = Color(0xFF03DAC6);
+const Color kDarkButtonSecondary = Color(0xFF156A62);
 const Color kDarkBottomNavBar = Color(0xFF1A1A1A);
 const Color kDarkTextColor = Colors.white;
 

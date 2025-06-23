@@ -44,15 +44,18 @@ class RecipeCategory extends StatelessWidget {
                       image: DecorationImage(
                         image: AssetImage('assets/images/recipe2.png'),
                         fit: BoxFit.cover,
-                        opacity: .8,
+                        opacity: .7,
                       ),
                     ),
-                    child: Text(
-                      'عرض كل الوصفات',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    child: Align(
+                      alignment: Alignment.topCenter ,
+                      child: Text(
+                        'عرض كل الوصفات',
+                        style: TextStyle(
+                          fontSize: 33,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -72,15 +75,18 @@ class RecipeCategory extends StatelessWidget {
                       image: DecorationImage(
                         image: AssetImage('assets/images/recipe1.png'),
                         fit: BoxFit.cover,
-                        opacity: .8,
+                        opacity: .7,
                       ),
                     ),
-                    child: Text(
-                      'خطة يومية عشوائية',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        'خطة يومية عشوائية',
+                        style: TextStyle(
+                          fontSize: 33,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -100,15 +106,18 @@ class RecipeCategory extends StatelessWidget {
                       image: DecorationImage(
                         image: AssetImage('assets/images/recipe3.png'),
                         fit: BoxFit.cover,
-                        opacity: .8,
+                        opacity: .7,
                       ),
                     ),
-                    child: Text(
-                      'الوجبات المفضله',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        'الوجبات المفضله',
+                        style: TextStyle(
+                          fontSize: 33,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
