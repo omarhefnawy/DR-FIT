@@ -24,7 +24,7 @@ class ExercisesView extends StatelessWidget {
       builder: (context, state) {
         var cubit = context.read<TranslateCubit>();
         return Scaffold(
-          backgroundColor: kPrimaryColor,
+          backgroundColor: PrimaryColor(context),
           appBar: customAppBar(
             context,
           ),
@@ -53,9 +53,9 @@ class ExercisesView extends StatelessWidget {
                   itemCount: exercise.length,
                 )
               : LoadingAnimationWidget.discreteCircle(
-                  color: kPrimaryColor,
+                  color: PrimaryColor(context),
                   size: 20,
-                  secondRingColor: kSecondaryColor,
+                  secondRingColor: secondaryColor(context),
                 ),
         );
       },

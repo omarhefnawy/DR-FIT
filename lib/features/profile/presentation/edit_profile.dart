@@ -108,9 +108,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       appBar: AppBar(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20),
@@ -191,13 +191,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(buttonPrimaryColor),
+                        MaterialStateProperty.all(buttonPrimaryColor(context)),
                   ),
                   onPressed: _saveChanges,
-                  child: const Text(
+                  child:  Text(
                     'حفظ التعديلات',
                     style: TextStyle(
-                      color: kSecondaryColor,
+                      color: secondaryColor(context),
                     ),
                   ),
                 ),

@@ -165,15 +165,15 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: isMyComment ? Colors.blueAccent : Colors.black,
+                      color: isMyComment ? Colors.blueAccent : textColor(context),
                     ),
                   ),
                   const SizedBox(height: 5),
                   Text(
                     comment.comment,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 16,
-                      color: Colors.black87,
+                      color: textColor(context),
                     ),
                   ),
                 ],
@@ -181,10 +181,10 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
             ),
             const SizedBox(width: 10),
             Text(
-              DateFormat('hh:mm a').format(comment.time.toDate()),
-              style: const TextStyle(
+              DateFormat('hh:mm a  dd/MM/yyyy ').format(comment.time.toDate()),
+              style:  TextStyle(
                 fontSize: 12,
-                color: Colors.grey,
+                color: textColor(context),
               ),
             ),
           ],
@@ -213,7 +213,7 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
           IconButton(
             icon: _isSaving
                 ? const CircularProgressIndicator()
-                : const Icon(Icons.send, color: buttonPrimaryColor),
+                :  Icon(Icons.send, color: buttonPrimaryColor(context)),
             onPressed: _isSaving ? null : _saveComment,
           ),
         ],

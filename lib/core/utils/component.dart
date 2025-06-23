@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 Widget defaultButton({
+  required BuildContext context,
   double width = double.infinity,
-  Color background = buttonPrimaryColor,
+  Color? background ,
   bool isUpperCase = true,
   double radius = 3.0,
   required void Function()? function,

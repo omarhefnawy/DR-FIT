@@ -1,0 +1,2 @@
+C:/Users/Okda/Desktop/New folder/DR-FIT/android/app/.cxx/Debug/6nw313z2/x86/CMakeFiles/edit_cache.dir
+C:/Users/Okda/Desktop/New folder/DR-FIT/android/app/.cxx/Debug/6nw313z2/x86/CMakeFiles/rebuild_cache.dir

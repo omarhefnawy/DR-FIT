@@ -92,7 +92,7 @@ class _InformationScreenState extends State<InformationScreen> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         leadingWidth: 200,
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Padding(
@@ -100,10 +100,10 @@ class _InformationScreenState extends State<InformationScreen> {
             child: Row(
               children: [
                 Icon(Icons.arrow_back_ios_new_rounded,
-                    color: buttonPrimaryColor, size: 20),
+                    color: buttonPrimaryColor(context), size: 20),
                 Text('عودة',
                     style: TextStyle(
-                        color: buttonPrimaryColor,
+                        color: buttonPrimaryColor(context),
                         fontSize: 18,
                         fontWeight: FontWeight.bold)),
               ],
@@ -111,7 +111,7 @@ class _InformationScreenState extends State<InformationScreen> {
           ),
         ),
       ),
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -124,7 +124,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: buttonPrimaryColor)),
+                          color: buttonPrimaryColor(context))),
                   SizedBox(height: context.height * .05),
 
                   // Profile Image Picker
@@ -204,7 +204,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       width: context.width * .444,
                       function: saveUserData,
                       text: 'التالي',
-                      radius: 20,
+                      radius: 20, context: context,
                     ),
                   ),
                 ],

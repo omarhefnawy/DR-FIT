@@ -68,7 +68,7 @@ class ExercisesType extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: customAppBar(context),
-            backgroundColor: kPrimaryColor,
+            backgroundColor: PrimaryColor(context),
             body: ConditionalBuilder(
               condition: state is ExerciseLoading,
               builder: (context) => Center(
@@ -80,7 +80,7 @@ class ExercisesType extends StatelessWidget {
                       textDirection: TextDirection.rtl,
                       'أنتظر لحظة من فضلك\n     جاري التحميل..',
                       style: TextStyle(
-                          color: buttonPrimaryColor,
+                          color: buttonPrimaryColor(context),
                           fontSize: 24,
                           fontWeight: FontWeight.bold),
                     ),
@@ -88,7 +88,7 @@ class ExercisesType extends StatelessWidget {
                       height: context.height * .1,
                     ),
                     LoadingAnimationWidget.progressiveDots(
-                      color: buttonPrimaryColor,
+                      color: buttonPrimaryColor(context),
                       size: 100,
                     ),
                   ],
@@ -105,7 +105,7 @@ class ExercisesType extends StatelessWidget {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: buttonPrimaryColor,
+                        color: buttonPrimaryColor(context),
                         borderRadius: BorderRadius.circular(
                           15,
                         ),

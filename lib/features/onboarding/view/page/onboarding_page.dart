@@ -14,7 +14,7 @@ class OnboardingPage extends StatelessWidget {
         var cubit = OnboardingCubit();
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: kPrimaryColor,
+            backgroundColor: PrimaryColor(context),
             actions: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -25,14 +25,14 @@ class OnboardingPage extends StatelessWidget {
                         'تخطي',
                         textAlign: TextAlign.center,
                         textDirection: TextDirection.rtl,
-                        style: const TextStyle(
-                          color: buttonPrimaryColor,
+                        style:  TextStyle(
+                          color: buttonPrimaryColor(context),
                           fontSize: 20,
                         ),
                       ),
                       Icon(
                         Icons.arrow_right,
-                        color: buttonPrimaryColor,
+                        color: buttonPrimaryColor(context),
                         size: 28,
                       ),
                     ],
@@ -44,7 +44,7 @@ class OnboardingPage extends StatelessWidget {
               ),
             ],
           ),
-          backgroundColor: kPrimaryColor,
+          backgroundColor: PrimaryColor(context),
           body: OnboardingBody(),
         );
       },

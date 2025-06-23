@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:dr_fit/core/shared/about_images.dart';
 import 'package:dr_fit/core/utils/component.dart';
 import 'package:dr_fit/core/utils/constants.dart';
+import 'package:dr_fit/core/utils/theme_provider.dart';
 import 'package:dr_fit/features/posts/cubit/posts_cubit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class EditPostScreen extends StatefulWidget {
   final String postId;
@@ -56,31 +57,24 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
     if (noText && noImage) {
       showToast(
-        text: 'يرجى إدخال نص أو اختيار صورة!',
-        state: ToastStates.WARNING,
-      );
+          text: 'يرجى إدخال نص أو اختيار صورة!', state: ToastStates.WARNING);
       return;
     }
 
-    // ✅ التحقق من محتوى النص إذا كان موجودًا
     if (trimmedText.isNotEmpty) {
       try {
-
         final isContentValid =
             await context.read<PostsCubit>().checkContent(trimmedText);
-
         if (!isContentValid) {
           showToast(
-            text: 'المحتوى يحتوي على لغة غير لائقة، يرجى التعديل',
-            state: ToastStates.ERROR,
-          );
+              text: 'المحتوى يحتوي على لغة غير لائقة، يرجى التعديل',
+              state: ToastStates.ERROR);
           return;
         }
       } catch (e) {
         showToast(
-          text: 'تعذر التحقق من المحتوى، يرجى المحاولة لاحقاً',
-          state: ToastStates.ERROR,
-        );
+            text: 'تعذر التحقق من المحتوى، يرجى المحاولة لاحقاً',
+            state: ToastStates.ERROR);
         return;
       }
     }
@@ -105,19 +99,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
             newText: trimmedText,
             newImageUrl: finalImageUrl,
           );
-
-      showToast(
-        text: 'تم تحديث المنشور بنجاح!',
-        state: ToastStates.SUCCESS,
-      );
-
+      showToast(text: 'تم تحديث المنشور بنجاح!', state: ToastStates.SUCCESS);
       await context.read<PostsCubit>().fetchPostById(postId: widget.postId);
       Navigator.pop(context);
     } catch (e) {
-      showToast(
-        text: 'حدث خطأ أثناء تحديث المنشور!',
-        state: ToastStates.ERROR,
-      );
+      showToast(text: 'حدث خطأ أثناء تحديث المنشور!', state: ToastStates.ERROR);
     } finally {
       if (mounted) {
         setState(() {
@@ -137,16 +123,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
             final size = snapshot.data!;
             return AspectRatio(
               aspectRatio: size.width / size.height,
-              child: Image.file(
-                _selectedImage!,
-                fit: BoxFit.cover,
-              ),
+              child: Image.file(_selectedImage!, fit: BoxFit.cover),
             );
           }
           return Container(
-            height: 200,
-            child: Center(child: CircularProgressIndicator()),
-          );
+              height: 200, child: Center(child: CircularProgressIndicator()));
         },
       );
     } else if (_imageUrl != null && !_removeImage) {
@@ -165,8 +146,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
           );
         },
         errorBuilder: (context, error, stackTrace) => Container(
-          color: Colors.grey[200],
-          child: Icon(Icons.error, color: Colors.red),
+          color: textColor(context).withOpacity(0.1),
+          child: Icon(Icons.error, color: Colors.redAccent),
         ),
       );
     }
@@ -194,16 +175,25 @@ class _EditPostScreenState extends State<EditPostScreen> {
       final shouldLeave = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('لم يتم حفظ التعديلات'),
-          content: Text('هل تريد الخروج بدون حفظ التغييرات؟'),
+          backgroundColor: PrimaryColor(context),
+          title: Text('لم يتم حفظ التعديلات',
+              style: TextStyle(
+                  color: textColor(context), fontWeight: FontWeight.bold)),
+          content: Text('هل تريد الخروج بدون حفظ التغييرات؟',
+              style: TextStyle(color: textColor(context))),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('إلغاء'),
+              child: Text('إلغاء',
+                  style: TextStyle(
+                      color: buttonPrimaryColor(context),
+                      fontWeight: FontWeight.bold)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text('نعم'),
+              child: Text('نعم',
+                  style: TextStyle(
+                      color: Colors.redAccent, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -215,6 +205,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final hasImage = (_selectedImage != null) ||
         (_imageUrl != null && _imageUrl!.isNotEmpty && !_removeImage);
 
@@ -228,13 +219,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor(context),
         appBar: AppBar(
-          title: Text('تعديل المنشور', style: TextStyle(color: Colors.black)),
+          title: Text(
+            'تعديل المنشور',
+            style: TextStyle(
+              color: textColor(context),
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: textColor(context)),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -242,9 +240,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // TextField Container
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: secondaryColor(
+                        context), // ✅ نفس مظهر صفحة إضافة المنشور
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
@@ -258,26 +258,40 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     controller: _postController,
                     maxLines: 5,
                     textDirection: TextDirection.rtl,
-                    style: TextStyle(fontSize: 20),
+                    style:
+                        TextStyle(fontSize: 20, color: textColor(context)), // ✅
                     decoration: InputDecoration(
                       hintText: 'اكتب شيئًا...',
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
                       contentPadding: EdgeInsets.all(10),
                     ),
                   ),
                 ),
                 SizedBox(height: 20),
-                if (hasImage)
-                  Column(
-                    children: [
-                      GestureDetector(
+
+                if (hasImage) ...[
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
+                        )
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: GestureDetector(
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (_) => Dialog(
-                              backgroundColor: Colors.black,
-                              insetPadding: EdgeInsets.all(10),
+                              backgroundColor: Colors.transparent,
+                              insetPadding: EdgeInsets.all(20),
                               child: InteractiveViewer(
                                 panEnabled: true,
                                 minScale: 0.5,
@@ -289,28 +303,57 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             ),
                           );
                         },
-                        child: Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
+                        child: Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            _buildImageWidget(),
+                            Container(
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.4),
+                                shape: BoxShape.circle,
                               ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: _buildImageWidget(),
-                          ),
+                              child: IconButton(
+                                icon:
+                                    Icon(Icons.fullscreen, color: Colors.white),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      insetPadding: EdgeInsets.all(10),
+                                      child: InteractiveViewer(
+                                        panEnabled: true,
+                                        minScale: 0.5,
+                                        maxScale: 3.0,
+                                        child: _selectedImage != null
+                                            ? Image.file(_selectedImage!)
+                                            : Image.network(_imageUrl!),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                SizedBox(height: 20),
+                  SizedBox(height: 8),
+                  Text(
+                    'انقر على الصورة للتكبير',
+                    style: TextStyle(
+                      color: themeProvider.isDark
+                          ? Colors.white70
+                          : Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                ],
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -321,7 +364,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: buttonPrimaryColor(context),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       onPressed: _pickImage,
                     ),
@@ -331,19 +379,33 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         label: Text('حذف الصورة',
                             style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.redAccent,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         onPressed: () {
                           showDialog(
                             context: context,
                             builder: (_) => AlertDialog(
-                              title: Text('تأكيد الحذف'),
-                              content:
-                                  Text('هل أنت متأكد أنك تريد حذف الصورة؟'),
+                              backgroundColor: PrimaryColor(context),
+                              title: Text('تأكيد الحذف',
+                                  style: TextStyle(
+                                    color: textColor(context),
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              content: Text('هل أنت متأكد أنك تريد حذف الصورة؟',
+                                  style: TextStyle(color: textColor(context))),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: Text('إلغاء'),
+                                  child: Text('إلغاء',
+                                      style: TextStyle(
+                                        color: textColor(context),
+                                        fontWeight: FontWeight.bold,
+                                      )),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -354,7 +416,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                     });
                                     Navigator.pop(context);
                                   },
-                                  child: Text('حذف'),
+                                  child: Text('حذف',
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                        fontWeight: FontWeight.bold,
+                                      )),
                                 ),
                               ],
                             ),
@@ -363,22 +429,30 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       ),
                   ],
                 ),
+
                 SizedBox(height: 30),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _updatePost,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: bottomNavigationBar,
+                      backgroundColor: bottomNavBarColor(context),
                       padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: _isLoading
-                        ? CupertinoActivityIndicator()
-                        : Text('تحديث',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white)),
+                        ? CupertinoActivityIndicator(color: Colors.white)
+                        : Text(
+                            'تحديث',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ),
               ],

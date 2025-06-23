@@ -52,7 +52,7 @@ class LoginScreen extends StatelessWidget {
           builder: (context, state) {
             var cubit = LoginCubit.get(context);
             return Scaffold(
-              backgroundColor: kPrimaryColor,
+              backgroundColor: PrimaryColor(context),
               body: Center(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -131,7 +131,7 @@ class LoginScreen extends StatelessWidget {
                               },
                               text: 'تسجيل الدخول',
                               isUpperCase: true,
-                              radius: 20,
+                              radius: 20, context: context,
                             ),
                           ),
                           SizedBox(height: 30),

@@ -38,11 +38,11 @@ class _DrFitLayoutState extends State<DrFitLayout> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+               Text(
                 textDirection: TextDirection.rtl,
                 '     جاري التحميل..   ',
                 style: TextStyle(
-                    color: buttonPrimaryColor,
+                    color: buttonPrimaryColor(context),
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
@@ -50,8 +50,8 @@ class _DrFitLayoutState extends State<DrFitLayout> {
                 height: context.height * .1,
               ),
               LoadingAnimationWidget.flickr(
-                leftDotColor: buttonPrimaryColor,
-                rightDotColor: bottomNavigationBar,
+                leftDotColor: buttonPrimaryColor(context),
+                rightDotColor: bottomNavBarColor(context),
                 size: 100,
               ),
             ],
@@ -67,7 +67,7 @@ class _DrFitLayoutState extends State<DrFitLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: PrimaryColor(context),
       body: screens[currentIndex],
       bottomNavigationBar: Stack(
         children: [
@@ -77,8 +77,8 @@ class _DrFitLayoutState extends State<DrFitLayout> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  buttonPrimaryColor,
-                  buttonSecondaryColor
+                  buttonPrimaryColor(context),
+                  buttonSecondaryColor(context)
                 ], // Customize your colors
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,

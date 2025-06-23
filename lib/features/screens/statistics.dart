@@ -2,6 +2,7 @@ import 'dart:math'; // Add this import for pow function
 
 import 'package:dr_fit/core/network/local/cache_helper.dart';
 import 'package:dr_fit/core/utils/component.dart';
+import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/features/exercises/presentation/screens/exercises_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -274,6 +275,7 @@ void initState() {
                       'مؤشر كتلة الجسم',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: textColor(context),
                       ),
                     ),
                     SizedBox(height: 4),
@@ -433,13 +435,14 @@ void initState() {
                   'تتبع شرب الماء',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                     color: textColor(context),
                   ),
                 ),
                 Spacer(),
                 Text(
                   DateFormat('d/M/y')
                       .format(DateTime.now()), // يعرض اليوم/الشهر/السنة
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(color:textColor(context)),
                 ),
               ],
             ),
@@ -456,11 +459,12 @@ void initState() {
               children: [
                 Text(
                   '$waterIntake مل',
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(color:textColor(context)),
                 ),
                 Text(
                   '$waterGoal مل',
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall?.copyWith(color:textColor(context)),
+                  
                 ),
               ],
             ),
@@ -520,6 +524,7 @@ void initState() {
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: textColor(context),
                   ),
                 ),
               ],
@@ -543,6 +548,7 @@ void initState() {
           'نصائح لك',
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+            color: textColor(context),
           ),
         ),
         SizedBox(height: 12),
