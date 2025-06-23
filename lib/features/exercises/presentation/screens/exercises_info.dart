@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:dr_fit/core/notification/local/local_notification.dart';
 import 'package:dr_fit/core/utils/constants.dart';
 import 'package:dr_fit/core/utils/context_extension.dart';
 import 'package:dr_fit/core/utils/custom_appbar.dart';
@@ -57,15 +58,12 @@ class ExercisesInfo extends StatelessWidget {
                           isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: Colors.red,
                         ),
-                        onPressed: () {
+                        onPressed: () async{
+                          await LocalNotificationService.showNotification(id: 1, title: " المفضله ", body: isFavorite ? "تمت ازاله تمرين من المفضله ":"تمت اضافه عنصر الى المفضله");
                           context
                               .read<FavoriteCubit>()
                               .toggleFavorite(exercises);
-                          showToast(
-                              text: isFavorite
-                                  ? 'تمت الإزالة بنجاح'
-                                  : 'تمت الاضافه بنجاح',
-                              state: ToastStates.SUCCESS);
+
                         },
                       );
                     },

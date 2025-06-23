@@ -9,16 +9,59 @@ import 'package:dr_fit/features/exercises/presentation/screens/exercises_type.da
 import 'package:dr_fit/features/layout/presentation/widgets/workout_card.dart';
 import 'package:dr_fit/features/profile/controller/profile_cubit.dart';
 import 'package:dr_fit/features/profile/controller/profile_states.dart';
-import 'package:dr_fit/features/Favorite/FavoritesScreen.dart';
+import 'package:dr_fit/features/Favorite/FavoritesScreen.dart'; // New import
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-class Home extends StatelessWidget {
-  Home({super.key});
+import '../near_gyms/gyms.dart';
+
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _bounceAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    _bounceAnimation = Tween<double>(begin: 0, end: 10).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final PageController _pageController = PageController();
+    final ValueNotifier<int> _currentPage = ValueNotifier<int>(0);
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double fontScale = screenWidth < 360 ? 0.9 : 1.0;
+    final double carouselHeight = screenHeight * 0.25;
+    final double logoSize = screenWidth * 0.3;
+
+    _pageController.addListener(() {
+      _currentPage.value = _pageController.page?.round() ?? 0;
+    });
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: buttonPrimaryColor(context),
@@ -29,12 +72,11 @@ class Home extends StatelessWidget {
           );
         },
         child: Icon(
-          // استخدام icon مخصص للشات
           Icons.smart_toy_outlined,
           color: Theme.of(context).brightness == Brightness.light
-              ? Colors.white // على الوضع النهاري
-              : textColor(context), // على الوضع الليلي
-          size: 30,
+              ? Colors.white
+              : textColor(context),
+          size: 30 * fontScale,
         ),
       ),
       backgroundColor: PrimaryColor(context),
@@ -50,6 +92,7 @@ class Home extends StatelessWidget {
                 style: TextStyle(
                   color: textColor(context),
                   fontWeight: FontWeight.bold,
+                  fontSize: 18 * fontScale,
                 ),
               );
             }
@@ -58,36 +101,35 @@ class Home extends StatelessWidget {
               style: TextStyle(
                 color: textColor(context),
                 fontWeight: FontWeight.bold,
+                fontSize: 18 * fontScale,
               ),
             );
           },
         ),
         actions: [
-          Icon(Icons.notifications, color: textColor(context)),
-          SizedBox(width: 10),
-          Icon(Icons.search, color: textColor(context)),
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return PopupMenuButton<ThemeMode>(
+                icon: Icon(Icons.color_lens, color: textColor(context)),
+                onSelected: (mode) {
+                  themeProvider.setThemeMode(mode);
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: ThemeMode.light, child: Text("Light")),
+                  const PopupMenuItem(value: ThemeMode.dark, child: Text("Dark")),
+                  const PopupMenuItem(value: ThemeMode.system, child: Text("System")),
+                ],
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.logout, color: textColor(context)),
             onPressed: () {
               _showLogoutDialog(context);
             },
           ),
-         Consumer<ThemeProvider>(
-  builder: (context, themeProvider, _) {
-    return PopupMenuButton<ThemeMode>(
-      icon: Icon(Icons.color_lens),
-      onSelected: (mode) {
-        themeProvider.setThemeMode(mode);
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(value: ThemeMode.light, child: Text("Light")),
-        PopupMenuItem(value: ThemeMode.dark, child: Text("Dark")),
-        PopupMenuItem(value: ThemeMode.system, child: Text("System")),
-      ],
-    );
-  },
-),
- ],
+          const SizedBox(width: 5),
+        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -98,75 +140,310 @@ class Home extends StatelessWidget {
             textDirection: TextDirection.rtl,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'لقد حان الوقت لكي تخطط جدولك.',
-                style: TextStyle(color: textColor(context)),
-                textDirection: TextDirection.rtl,
+              const SizedBox(height: 10),
+              // Features Carousel
+              AnimatedOpacity(
+                opacity: 1.0,
+                duration: const Duration(milliseconds: 600),
+                child: SizedBox(
+                  height: carouselHeight,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: 3,
+                    itemBuilder: (context, index) {
+                      final features = [
+                        {
+                          'title': 'خطط تمارين مخصصة',
+                          'description': 'تمارين مصممة لتناسب مستواك وأهدافك.',
+                          'image': 'assets/images/onboarding1.png',
+                          'icon': Icons.fitness_center,
+                        },
+                        {
+                          'title': 'متابعة تقدمك',
+                          'description': 'تابع إحصائياتك وتحسن أدائك يوميًا.',
+                          'image': 'assets/images/onboarding2.png',
+                          'icon': Icons.bar_chart,
+                        },
+                        {
+                          'title': 'شات بوت ذكي',
+                          'description': 'اسأل واستشر مدربك الافتراضي في أي وقت.',
+                          'image': 'assets/images/splash.png',
+                          'icon': Icons.smart_toy,
+                        },
+                      ];
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: Image.asset(
+                                  features[index]['image'] as String,
+                                  fit: BoxFit.cover,
+                                  color: Colors.black.withOpacity(0.3),
+                                  colorBlendMode: BlendMode.darken,
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      buttonPrimaryColor(context).withOpacity(0.5),
+                                      Colors.transparent,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Icon(
+                                      features[index]['icon']! as IconData,
+                                      color: Colors.white,
+                                      size: 30 * fontScale,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      features[index]['title'] as String,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18 * fontScale,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textDirection: TextDirection.rtl,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      features[index]['description'] as String,
+                                      style: TextStyle(
+                                        color: Colors.white.withOpacity(0.8),
+                                        fontSize: 14 * fontScale,
+                                      ),
+                                      textDirection: TextDirection.rtl,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Dynamic Dots Indicator
+              ValueListenableBuilder<int>(
+                valueListenable: _currentPage,
+                builder: (context, currentPage, _) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    textDirection: TextDirection.rtl,
+                    children: List.generate(
+                      3,
+                          (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: currentPage == index ? 12 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: currentPage == index
+                              ? buttonPrimaryColor(context)
+                              : buttonPrimaryColor(context).withOpacity(0.3),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black54,
-                      blurRadius: 7,
-                      spreadRadius: 2,
-                      blurStyle: BlurStyle.normal,
-                    ),
-                  ],
-                  gradient: LinearGradient(
-                    colors: [
-                      buttonPrimaryColor(context),
-                      buttonPrimaryColor(context),
-                    ],
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                    transform: const GradientRotation(3),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
+              // Workout Cards
+              AnimatedOpacity(
+                opacity: 1.0,
+                duration: const Duration(milliseconds: 800),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final cardWidth = (constraints.maxWidth - 16) / 2;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            navigateTo(context, FavoritesScreen());
+                          },
+                          child: SizedBox(
+                            width: cardWidth,
+                            child: WorkoutCard(
+                              title: 'التمارين المفضلة',
+                              imagePath: 'assets/images/home2.jpg',
+                              icon: Icons.article,
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            navigateTo(context, ExercisesType());
+                          },
+                          child: SizedBox(
+                            width: cardWidth,
+                            child: WorkoutCard(
+                              title: 'التمارين',
+                              imagePath: 'assets/images/home1.png',
+                              icon: Icons.search,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+              ),
+              const SizedBox(height: 20),
+              // Nearby Gyms Prompt
+              AnimatedOpacity(
+                opacity: 1.0,
+                duration: const Duration(milliseconds: 1000),
+                child: InkWell(
+                  onTap: () {
+                    navigateTo(context, const GymsScreen());
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          buttonPrimaryColor(context),
+                          buttonPrimaryColor(context).withOpacity(0.7),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'ابدأ تمرين جديد',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    child: Row(
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: Colors.white,
+                          size: 30 * fontScale,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'شوف أقرب جيم ليك واتمرن',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18 * fontScale,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textDirection: TextDirection.rtl,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'ابحث عن أفضل الجيمات القريبة من موقعك الآن!',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 12 * fontScale,
+                                ),
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            'ابحث الآن',
+                            style: TextStyle(
+                              color: buttonPrimaryColor(context),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12 * fontScale,
+                            ),
+                            textDirection: TextDirection.rtl,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      navigateTo(context, FavoritesScreen());
-                    },
-                    child: WorkoutCard(
-                      title: 'التمارين المفضلة',
-                      imagePath: 'assets/images/home2.jpg',
-                      icon: Icons.article,
+              const SizedBox(height: 30),
+              // Logo Animation
+              AnimatedBuilder(
+                animation: _bounceAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, _bounceAnimation.value),
+                    child: Center(
+                      child: Container(
+                        width: logoSize,
+                        height: logoSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: [
+                              buttonPrimaryColor(context),
+                              buttonPrimaryColor(context).withOpacity(0.7),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/logo/logo.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      navigateTo(context, ExercisesType());
-                    },
-                    child: WorkoutCard(
-                      title: 'التمارين',
-                      imagePath: 'assets/images/home1.png',
-                      icon: Icons.search,
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
               const SizedBox(height: 20),
             ],
