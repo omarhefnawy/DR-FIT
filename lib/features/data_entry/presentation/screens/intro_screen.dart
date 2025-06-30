@@ -46,6 +46,7 @@ class IntroScreen extends StatelessWidget {
                     navigateTo(context, WeightPickerScreen());
                   },
                   text: 'التالي',
+                  background: Colors.blueAccent,
                   radius: 50, context: context,
                 ),
               ),

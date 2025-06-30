@@ -25,67 +25,61 @@ import 'package:provider/provider.dart';
 
 import 'core/notification/local/local_notification.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: "keys.env");
-  //notification
-  await LocalNotificationService.init();
-
-  Bloc.observer = MyBlocObserver();
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "keys.env");
+  await Firebase.initializeApp(); // لازم يكون قبل استخدام FirebaseAuth
+  await LocalNotificationService.init();
+  await CacheHelper.init();
+  Bloc.observer = MyBlocObserver();
 
-  CacheHelper.init();
-  await Firebase.initializeApp();
+  runApp(MyApp());
+}
+
+
+class MyApp extends StatelessWidget {
+  MyApp({super.key});
 
   final postsRepo = PostsRepoImp();
   final commentRepo = CommentRepoImp();
 
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => LoginCubit()),
-          BlocProvider(create: (_) => ExerciseCubit()),
-          BlocProvider(create: (_) => OnboardingCubit()),
-          BlocProvider(create: (_) => TranslateCubit()),
-          BlocProvider(create: (_) => FavoriteCubit()),
-          BlocProvider(create: (_) => RecipeCubit()..fetchHealthyRecipes()),
-          BlocProvider(
-            create: (_) => ProfileCubit()
-              ..fetchData(uid: FirebaseAuth.instance.currentUser?.uid ?? ""),
-          ),
-          BlocProvider(
-            create: (_) =>
-                PostsCubit(commentRepoImp: commentRepo, postsRepoImp: postsRepo)
-                  ..fetchAllPosts(),
-          ),
-        ],
-     child:DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => MyApp(), // Wrap your app
-    ),
-  ),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    final bool hasOnboarding = CacheHelper.getData(key: 'onboarding', defaultValue: false) as bool;
+    final hasOnboarding = CacheHelper.getData(key: 'onboarding', defaultValue: false) as bool;
 
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, _) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeProvider.themeMode,
-          home: hasOnboarding ?  AuthPage() : const OnboardingPage(),
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => LoginCubit()),
+        BlocProvider(create: (_) => ExerciseCubit()),
+        BlocProvider(create: (_) => OnboardingCubit()),
+        BlocProvider(create: (_) => TranslateCubit()),
+        BlocProvider(create: (_) => FavoriteCubit()),
+        BlocProvider(create: (_) => RecipeCubit()..fetchHealthyRecipes()),
+        BlocProvider(
+          create: (_) => ProfileCubit()
+            ..fetchData(uid: FirebaseAuth.instance.currentUser?.uid ?? ""),
+        ),
+        BlocProvider(
+          create: (_) => PostsCubit(
+            commentRepoImp: commentRepo,
+            postsRepoImp: postsRepo,
+          )..fetchAllPosts(),
+        ),
+      ],
+      child: ChangeNotifierProvider(
+        create: (_) => ThemeProvider(),
+        child: Consumer<ThemeProvider>(
+          builder: (context, themeProvider, _) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeProvider.themeMode,
+              home: hasOnboarding ? AuthPage() : const OnboardingPage(),
+            );
+          },
+        ),
+      ),
     );
   }
 }

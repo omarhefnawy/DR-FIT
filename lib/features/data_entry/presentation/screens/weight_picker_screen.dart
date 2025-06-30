@@ -138,6 +138,7 @@ class WeightPickerState extends State<WeightPickerScreen> {
               },
               text: 'التالي',
               radius: 20,
+              background: Colors.blueAccent,
               width: context.width * .444, context: context,
             ),
           ),
