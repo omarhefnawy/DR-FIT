@@ -155,6 +155,7 @@ class HeightPickerState extends State<HeightPickerScreen> {
                 },
                 text: 'التالي',
                 radius: 20,
+                background: Colors.blueAccent,
                 width: context.width * .444, context: context,
               ),
             ),

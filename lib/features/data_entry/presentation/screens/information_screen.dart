@@ -204,6 +204,7 @@ class _InformationScreenState extends State<InformationScreen> {
                       width: context.width * .444,
                       function: saveUserData,
                       text: 'التالي',
+                      background: Colors.blueAccent,
                       radius: 20, context: context,
                     ),
                   ),

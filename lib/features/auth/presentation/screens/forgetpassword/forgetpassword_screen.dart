@@ -102,6 +102,7 @@ class ForgetpasswordScreen extends StatelessWidget {
                                 }
                               }
                             },
+                            background: Colors.blueAccent,
                             text: 'reset',
                             isUpperCase: true,
                             radius: 20, context: context,

@@ -36,7 +36,7 @@ Color textColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark ? kDarkTextColor : kLightTextColor;
 
 Color textFieldColor(BuildContext context) {
-  return Theme.of(context).brightness == Brightness.dark
+  return Theme.of(context).brightness == Brightness.light
       ? Colors.white // أبيض نقي للوضع الداكن
       : Colors.black; // أسود للوضع الفاتح
 }

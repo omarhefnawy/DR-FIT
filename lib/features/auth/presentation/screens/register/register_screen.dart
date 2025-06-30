@@ -137,6 +137,7 @@ class RegisterScreen extends StatelessWidget {
                               }
                             },
                             text: 'تسجيل',
+                            background: Colors.blueAccent,
                             isUpperCase: true,
                             radius: 20, context: context,
                           ),

@@ -52,7 +52,7 @@ class LoginScreen extends StatelessWidget {
           builder: (context, state) {
             var cubit = LoginCubit.get(context);
             return Scaffold(
-              backgroundColor: PrimaryColor(context),
+              backgroundColor: kLightPrimary,
               body: Center(
                 child: SingleChildScrollView(
                   child: Padding(
@@ -119,6 +119,7 @@ class LoginScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 60),
                             child: defaultButton(
+                              background: Colors.blueAccent[400],
                               function: () {
                                 if (formKey.currentState!.validate()) {
                                   final email = emailController.text.trim();

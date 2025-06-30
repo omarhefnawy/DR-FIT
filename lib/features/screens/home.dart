@@ -73,9 +73,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         },
         child: Icon(
           Icons.smart_toy_outlined,
-          color: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : textColor(context),
+          color: textFieldColor(context),
           size: 30 * fontScale,
         ),
       ),
@@ -122,12 +120,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.logout, color: textColor(context)),
-            onPressed: () {
-              _showLogoutDialog(context);
-            },
-          ),
+
           const SizedBox(width: 5),
         ],
       ),
@@ -147,7 +140,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 duration: const Duration(milliseconds: 600),
                 child: SizedBox(
                   height: carouselHeight,
-                  child: PageView.builder(
+                  child: PageView.builder(  
                     controller: _pageController,
                     itemCount: 3,
                     itemBuilder: (context, index) {
@@ -462,53 +455,5 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     } else {
       return 'مساء الخير';
     }
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: PrimaryColor(context),
-          title: Text(
-            'تأكيد تسجيل الخروج',
-            style: TextStyle(color: textColor(context)),
-          ),
-          content: Text(
-            'هل أنت متأكد أنك تريد تسجيل الخروج؟',
-            style: TextStyle(color: textColor(context)),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'لا',
-                style: TextStyle(color: textColor(context)),
-              ),
-            ),
-            BlocListener<LoginCubit, LoginStates>(
-              listener: (context, state) {
-                if (state is LogOutState) {
-                  Navigator.of(context).pop();
-                  navigateAndFinish(context, LoginScreen());
-                }
-              },
-              child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  navigateAndFinish(context, LoginScreen());
-                },
-                child: const Text(
-                  'نعم',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 }
