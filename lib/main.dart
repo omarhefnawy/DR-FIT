@@ -28,12 +28,17 @@ import 'core/notification/local/local_notification.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "keys.env");
-  await Firebase.initializeApp(); // لازم يكون قبل استخدام FirebaseAuth
+  await Firebase.initializeApp();
   await LocalNotificationService.init();
   await CacheHelper.init();
   Bloc.observer = MyBlocObserver();
 
-  runApp(MyApp());
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => MyApp(), // Wrap your app
+    ),
+  );
 }
 
 
